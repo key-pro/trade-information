@@ -12,7 +12,7 @@
         <th>更新時間</th>
         <th>変動幅</th>
     </tr>
-    <tr>
+    <!-- <tr>
         <td id="USDCAD_country"></td>
         <td id="USDCAD_currency_pairs"></td>
         <td id="USDCAD_before_value"></td>
@@ -29,7 +29,7 @@
         <td id="USDGBP_fluctuation"></td>
         <td id="USDGBP_timestamp"></td>
         <td id="USDGBP_variation"></td>
-    </tr>
+    </tr> -->
     <tr>
         <td id="USDJPY_country"></td>
         <td id="USDJPY_currency_pairs"></td>
@@ -41,8 +41,12 @@
     </tr>
 </table>
 <script type="text/javascript">
+    function my_round(value,pos){
+        return Math.round(value * (10 ** pos))/(10 ** pos);
+    }
+
     function fx_rate(){
-        var symbol = "USDCAD,USDGBP,USDJPY";
+        var symbol = "USDJPY";
         // console.log(symbol);
         var hostname = "{{ request()->getUriForPath('') }}";
         // console.log(hostname);
@@ -57,22 +61,35 @@
             success: function(data, textStatus){
                 // console.log(data);
                 for(i = 0 ; i <data.length; i++){
-                    // console.log(data[i].symbol);
+                    console.log(data[i].symbol);
                     var currency = data[i].symbol;
                     $('#'+ currency + "_country").text(data[i].symbol);
                     $('#'+ currency + "_currency_pairs").text(data[i].symbol);
-                    if(sessionStorage.setItem('rate', data[i].rate) != ""){
-                        $('#'+ currency + "_before_value").text(sessionStorage.getItem('rate'));
-                    }else{
-                        var rate = sessionStorage.setItem('rate', data[i].rate);
-                        before_value.push(rate);
-                        console.log(before_value);
-                    }
-                    $('#'+ currency + "_after_value").text(data[i].rate);
-                    $('#'+ currency + "_fluctuation").text(data[i].rate);
+                    $('#'+ currency + "_before_value").text($('#'+ currency + "_after_value").text());
+                    $('#'+ currency + "_after_value").text(my_round(data[i].rate,5));
+                    var value = $('#'+ currency + "_after_value").text() - $('#'+ currency + "_before_value").text();
+                    $('#'+ currency + "_fluctuation").text(my_round(value,4));
                     $('#'+ currency + "_timestamp").text((new Date(data[0].timestamp)).toString());
-                    $('#'+ currency + "_variation").text(data[i].rate);  
-                    console.log(sessionStorage.getItem('rate'));
+                    if($('#'+ currency + "_before_value").text()){
+                        var ave = ($('#'+ currency + "after_fluctuation").text() / $('#'+ currency + "_before_value").text()) * 100;
+                        try{
+                            // console.log(ave);
+                            // if(ave){
+                            //     if(("" + ave).indexOf("0.00")){
+                            //         ave = my_round(ave,5);
+                            //     }else if(("" + ave).indexOf("0.0")){
+                            //         ave = my_round(ave,4);
+                            //     }else if(("" + ave).indexOf("0.")){
+                            //         ave = my_round(ave,3);
+                            //     }else{
+                            //         ave = my_round(ave,6)
+                            //     }
+                            // }
+                            $('#'+ currency + "_variation").text(ave  + "%");
+                        }catch(e){
+                            console.log(e.getMessage());
+                        }
+                    }
                 }
             },
             error: function(xhr, textStatus, errorThrown){
@@ -80,9 +97,9 @@
                 alert("通信エラーが発生しました。");
             }
         });
-
+        
     }
-
     fx_rate();
+    setInterval(fx_rate,5000);
 </script>
 @endsection
