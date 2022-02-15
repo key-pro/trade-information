@@ -75,7 +75,9 @@ class MeigaraController extends Controller
         $symbol = $request->input("symbol");
         // dd($symbol,$chartdate,$chartInterval);
         $url = "https://cloud.iexapis.com/stable/tops?token=" . $apikey . "&symbols=" . $symbol;
+        // dd($url);
         $json = file_get_contents($url);
+        // dd($url);
         if($json !== false){
             echo $json;
         }else{
@@ -90,6 +92,18 @@ class MeigaraController extends Controller
         $chartInterval = $request->input("chartInterval");
         // dd($symbol,$chartdate,$chartInterval);
         $url = "https://cloud.iexapis.com/stable/stock/" . $symbol . "/chart/date/" . $chartdate . "?chartInterval=" . $chartInterval . "&token=" . $apikey;
+        $json = file_get_contents($url);
+        if($json !== false){
+            echo $json;
+        }else{
+            echo json_encode([ "status" => "error","server_response" => $http_response_header[0]]);
+        }
+    }
+
+    public function aveData(Request $request){
+        $apikey = config("custom.iex_api_key");
+        $symbol = $request->input("symbol");
+        $url = "https://cloud.iexapis.com/stable/stock/" . $symbol . "/chart/" . "1y" . "?token=" . $apikey;
         $json = file_get_contents($url);
         if($json !== false){
             echo $json;

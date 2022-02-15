@@ -2,8 +2,11 @@
 @section('title','銘柄カテゴリ名一覧')
 @section('content')
         <form action="{{route('Meigara.index')}}" method="get">
-            <input type="text" name="text_meigara_name_part">
-            <button>検索</button>
+            <div class="search_bar">
+                <i class="fas fa-search search_icon"></i>
+                    <input type="text" name="text_meigara_name_part" id="text2" placeholder="企業名検索">
+                <button>検索</button>
+            </div>
         </form>
         @foreach($meigaras as $meigara)
         <div class="meigara-entry">

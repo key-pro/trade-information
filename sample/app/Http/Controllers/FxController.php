@@ -13,7 +13,7 @@ class FxController extends Controller
 
     public function rateData(Request $request){
         $apikey = config("custom.iex_api_key");
-        $symbol = "USDCAD,USDGBP,USDJPY";
+        $symbol = $request->input("symbol");
         $url = "https://cloud.iexapis.com/stable/fx/latest?symbols=" . $symbol . "&token=" . $apikey;
         // dd($url);
         $json = file_get_contents($url);

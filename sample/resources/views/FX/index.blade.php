@@ -2,57 +2,71 @@
 @section('title','FX通貨一覧')
 @section('content')
 <h2>FXリアルタイムレート</h2>
-<table class="fx_rate">
+<table class="fx_rate" id="fx_rate_table">
     <tr>
-        <th>国旗</th>
-        <th>通貨ペア</th>
-        <th>更新前</th>
-        <th>更新後</th>
-        <th>変動</th>
-        <th>更新時間</th>
-        <th>変動幅</th>
-    </tr>
-    <!-- <tr>
-        <td id="USDCAD_country"></td>
-        <td id="USDCAD_currency_pairs"></td>
-        <td id="USDCAD_before_value"></td>
-        <td id="USDCAD_after_value"></td>
-        <td id="USDCAD_fluctuation"></td>
-        <td id="USDCAD_timestamp"></td>
-        <td id="USDCAD_variation"></td>
-    </tr>
-    <tr>
-        <td id="USDGBP_country"></td>
-        <td id="USDGBP_currency_pairs"></td>
-        <td id="USDGBP_before_value"></td>
-        <td id="USDGBP_after_value"></td>
-        <td id="USDGBP_fluctuation"></td>
-        <td id="USDGBP_timestamp"></td>
-        <td id="USDGBP_variation"></td>
-    </tr> -->
-    <tr>
-        <td id="USDJPY_country"></td>
-        <td id="USDJPY_currency_pairs"></td>
-        <td id="USDJPY_before_value"></td>
-        <td id="USDJPY_after_value"></td>
-        <td id="USDJPY_fluctuation"></td>
-        <td id="USDJPY_timestamp"></td>
-        <td id="USDJPY_variation"></td>
+        <th class="country">国旗</th>
+        <th class="currency_pairs">通貨ペア</th>
+        <th class="before_value">更新前</th>
+        <th class="after_value">更新後</th>
+        <th class="fluctuation">変動</th>
+        <th class="updown">変化↑↓</th>
+        <th class="timestamp">更新時間</th>
+        <th class="variation">変動幅</th>
     </tr>
 </table>
 <script type="text/javascript">
+     var currency_pairs = [
+        ["AUDUSD","CADCHF","EURAUD"],
+        ["EURCAD","EURCHF","EURGBP"],
+        ["EURJPY","EURNOK","EURNZD"],
+        ["EURSEK","EURUSD","GBPAUD"],
+        ["GBPCAD","GBPCHF","GBPJPY"],
+        ["GBPNOK","GBPNZD","GBPSEK"],
+        ["GBPUSD","JPYCAD","JPYCHF"],
+        ["NZDUSD","USDCAD","USDCHF"],
+        ["USDCNH","USDCZK","USDJPY",],
+        ["USDDKK","USDHKD","USDHUF"],
+        ["USDILS","USDINR","USDSGD"],
+        ["USDMXN","USDNOK","USDSEK"],
+        ["USDPLN","USDRON","USDRUB"],
+        ["USDTHB","USDTRY","USDZAR"]
+    ];
+    //以下35はNULLしか返ってこない
+    // "USDAED","USDBGN","USDBHD","USDCNY","USDIDR","USDKRW","USDKWD","USDMYR","USDSAR","USDTWD", 
+
+    function table_init(){
+        var row_src = '<tr>' +
+        '<td id="XXXYYY_country"></td>' +
+        '<td id="XXXYYY_currency_pairs"></td>' +
+        '<td id="XXXYYY_before_value"></td>' +
+        '<td id="XXXYYY_after_value"></td>' +
+        '<td id="XXXYYY_fluctuation"></td>' +
+        '<td id="XXXYYY_updown"></td>' +
+        '<td id="XXXYYY_timestamp"></td>' +
+        '<td id="XXXYYY_variation"></td>' +
+        '</tr>';
+        for(i = 0; i < currency_pairs.length; i++){
+            for(j = 0; j < currency_pairs[i].length; j++){
+                var pair = currency_pairs[i][j];
+                var row = row_src.replaceAll("XXXYYY",pair);
+                $("#fx_rate_table").append(row);
+            }
+        }
+    }
+
     function my_round(value,pos){
         return Math.round(value * (10 ** pos))/(10 ** pos);
     }
 
-    function fx_rate(){
-        var symbol = "USDJPY";
+    function fx_rate(symbol){
         // console.log(symbol);
         var hostname = "{{ request()->getUriForPath('') }}";
         // console.log(hostname);
         var url = hostname + "/api/FX/rates?symbol=" + symbol;
         // console.log(url);
         var before_value = [];
+        // console.log(symbol);
+        // return;
         $.ajax({
             url: url,
             dataType: "json",
@@ -61,34 +75,59 @@
             success: function(data, textStatus){
                 // console.log(data);
                 for(i = 0 ; i <data.length; i++){
-                    console.log(data[i].symbol);
+                    // console.log(data[i].symbol);
                     var currency = data[i].symbol;
+                    if(currency != "USDCAD" && currency != "USDJPY"){
+                        // console.log(currency);
+                    }
                     $('#'+ currency + "_country").text(data[i].symbol);
                     $('#'+ currency + "_currency_pairs").text(data[i].symbol);
                     $('#'+ currency + "_before_value").text($('#'+ currency + "_after_value").text());
                     $('#'+ currency + "_after_value").text(my_round(data[i].rate,5));
                     var value = $('#'+ currency + "_after_value").text() - $('#'+ currency + "_before_value").text();
-                    $('#'+ currency + "_fluctuation").text(my_round(value,4));
-                    $('#'+ currency + "_timestamp").text((new Date(data[0].timestamp)).toString());
-                    if($('#'+ currency + "_before_value").text()){
-                        var ave = ($('#'+ currency + "after_fluctuation").text() / $('#'+ currency + "_before_value").text()) * 100;
+                    var val2 = my_round(value,4);
+                    $('#'+ currency + "_fluctuation").text(val2);
+                    if(val2 == 0){
+                        $('#'+ currency + "_updown").text("-");
+                        $('#'+ currency + "_updown").css("background-color","white");
+                    }else if(val2 > 0){
+                        $('#'+ currency + "_updown").text("↑");
+                        $('#'+ currency + "_updown").css("background-color","#ffcccc");
+                    }else{
+                        $('#'+ currency + "_updown").text("↓");
+                        $('#'+ currency + "_updown").css("background-color","#ccccff");
+                    }
+
+                    if(currency == "USDAED"){
+                                console.log(currency);
+                    }
+
+                    $('#'+ currency + "_timestamp").text((new Date(data[0].timestamp)).toString().substr(16,8));
+                    var before_value = $('#'+ currency + "_before_value").text();
+                    if(before_value && before_value != "0"){
+                        var ave = ($('#'+ currency + "_after_value").text() / $('#'+ currency + "_before_value").text());
                         try{
                             // console.log(ave);
-                            // if(ave){
-                            //     if(("" + ave).indexOf("0.00")){
-                            //         ave = my_round(ave,5);
-                            //     }else if(("" + ave).indexOf("0.0")){
-                            //         ave = my_round(ave,4);
-                            //     }else if(("" + ave).indexOf("0.")){
-                            //         ave = my_round(ave,3);
-                            //     }else{
-                            //         ave = my_round(ave,6)
-                            //     }
-                            // }
+                            if(ave){
+                                if(("" + ave).indexOf("0.00")){
+                                    ave = my_round(ave,5);
+                                }else if(("" + ave).indexOf("0.0")){
+                                    ave = my_round(ave,4);
+                                }else if(("" + ave).indexOf("0.")){
+                                    ave = my_round(ave,3);
+                                }else{
+                                    ave = my_round(ave,6)
+                                }
+                            }
+                            if(("" + ave).length >= 10){
+                                // console.log(ave);
+                            }
                             $('#'+ currency + "_variation").text(ave  + "%");
                         }catch(e){
                             console.log(e.getMessage());
                         }
+                    }else{
+                        $('#'+ currency + "_variation").text("-");
                     }
                 }
             },
@@ -97,9 +136,20 @@
                 alert("通信エラーが発生しました。");
             }
         });
-        
     }
-    fx_rate();
-    setInterval(fx_rate,5000);
+    var pair_index = 0;
+    function fx_rate_all(){
+        // for(i= 0; i < currency_pairs.length; i++){
+            fx_rate(currency_pairs[pair_index].join(","));
+            pair_index++;
+            if(pair_index >= currency_pairs.length ){
+                pair_index = 0;   
+            }
+            setTimeout(fx_rate_all,500);
+        // }
+    }
+    table_init();
+    fx_rate_all();
+    // setInterval(fx_rate_all,10000);
 </script>
 @endsection
