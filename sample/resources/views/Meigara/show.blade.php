@@ -33,11 +33,18 @@ $('#chart_date').val(date);
             $('#bidSize').text("取引時間外").css({"color":"red","font-weight":"bold"});
             $('#askPrice').text("取引時間外").css({"color":"red","font-weight":"bold"});
             $('#askSize').text("取引時間外").css({"color":"red","font-weight":"bold"});
+            $('#kounyu_kabuka_rate').text("取引時間外").css({"color":"red","font-weight":"bold"});
+            //リアルタイム購入入力チェック用為替レート
+            fx_rate();
         }else{
             $('#bidPrice').text(data[0].bidPrice);
             $('#bidSize').text(data[0].bidSize);
             $('#askPrice').text(data[0].askPrice);
             $('#askSize').text(data[0].askSize);
+            $('#kounyu_kabuka_rate').text(data[0].bidPrice);
+             //リアルタイム購入入力チェック用為替レート
+            fx_rate();
+            kainecheck(data);
         }
         $('#lastUpdated').text((new Date(data[0].lastUpdated)).toUTCString());
         $('#lastSalePrice').text(data[0].lastSalePrice);
@@ -80,6 +87,9 @@ function chart_fetch_draw(date,chartInterval){
                 candle_data.push([data[i].minute,data[i].low,data[i].open,data[i].close,data[i].high]);
             }
         }
+        //レンジ範囲値渡し
+        BarChart(data,chartInterval);
+        //リアルタイム購入入力チェック
         // ComboChart(data);
         // console.log(candle_data);
         
@@ -408,13 +418,57 @@ function volumeChart(volume, dates, length){
 }
 
     
-    
+function BarChart(data,chartInterval){    
+    // console.log(data);
+    var takane = 0;
+    for(var i = 0; i < data.length; i++){
+        if(takane < data[i].marketHigh){
+            takane = data[i].marketHigh;
+        }
+    }
+    var symbol = '{{ $meigara -> symbol }}';
+    var hostname = "{{ request()->getUriForPath('') }}";
+    var chartInterval = chartInterval;
+    var param_date = new Date();
+    param_date.setDate(param_date.getDate() - 2);
+    var param_Month = param_date.getMonth() + 1;
+    var param_Month_str = "";
+    if(param_Month >= 10){
+        param_Month_str = param_Month.toString();
+    }else{
+        param_Month_str = "0" + param_Month.toString()
+    }
+    param_date = param_date.getFullYear() + param_Month_str + param_date.getDate();
+    // console.log(param_date);
+    // alert(hostname);
+    var url = hostname + "/api/Meigara/chart_data?symbol=" + symbol + "&chartdate=" + param_date + "&chartInterval=" + chartInterval;
+    // console.log(url);
+    // alert(url);
+    // candle_data = [];
+    var ototoi_owarine = 0;
+    $.ajax({
+        url: url,
+        dataType: "json",
+        cache: false,
+        async: false,
+        success: function(data, textStatus){
+        // 成功したとき
+        // console.log(data);
+        
+        // data にサーバーから返された html が入る
+        ototoi_owarine = data[data.length-1].marketClose;
+        },
+        error: function(xhr, textStatus, errorThrown){
+        // エラー処理
+        alert("通信エラーが発生しました。");
+        }
+    });
     google.load("visualization", "1", {packages:["corechart"]});
     google.setOnLoadCallback(
         function() {
             var data = google.visualization.arrayToDataTable([
-            [       '', '売上高', '営業利益', '経常利益'],
-            ['2004 年',     1000,        400,        380],
+            [       '', 'レンジ幅'],
+            ['1日レンジ幅',takane - ototoi_owarine]
             ]);
 
             var options = {
@@ -425,10 +479,88 @@ function volumeChart(volume, dates, length){
             chart.draw(data, options);
         }
     );
+}
+
+function fx_rate(){
+    var hostname = "{{ request()->getUriForPath('') }}";
+    var symbol = "USDJPY";
+    var url = hostname + "/api/FX/rates?symbol=" + symbol;
+     // console.log(symbol)
+    // console.log(hostname);
+    // console.log(url);
+    $.ajax({
+            url: url,
+            dataType: "json",
+            cache: false,
+            async: false,
+            success: function(data, textStatus){
+                var rate = data[0].rate;
+                //Math.ceil(data[0].rate,1)
+                // console.log(rate);
+                $('#fx_rate').text(rate);
+                //リアルタイム購入入力チェック用計算用
+            },
+            error: function(xhr, textStatus, errorThrown){
+                // エラー処理
+                alert("通信エラーが発生しました。");
+            }
+    });
+}
+
+function kainekeisan(kabuka_rate_data,fx_rate){
+    var kabuka_rate = kabuka_rate_data;
+    var fx_rate = fx_rate;
+    var user_ryou =  $('#user_ryou').val();
+    console.log(user_ryou);
+    console.log(kabuka_rate);
+    console.log(fx_rate);
+    var kabu_nedan = kabuka_rate * fx_rate;
+    console.log(kabu_nedan);
+    var goukei = parseInt(kabu_nedan * user_ryou,10);
+    console.log(goukei);
+    $("#goukei").text("合計金額は￥" + goukei + "円").css("font-size","1em");
+}
+
+function kainecheck(data){
+    var user_ryou = 0;
+    var hostname = "{{ request()->getUriForPath('') }}";
+    var symbol = "USDJPY";
+    var url = hostname + "/api/FX/rates?symbol=" + symbol;
+     // console.log(symbol)
+    // console.log(hostname);
+    // console.log(url);
+    var fx_rate = 0;
+    $.ajax({
+            url: url,
+            dataType: "json",
+            cache: false,
+            async: false,
+            success: function(data, textStatus){
+                fx_rate = data[0].rate;
+                //Math.ceil(data[0].rate,1)
+                // console.log(rate);
+                $('#fx_rate').text(fx_rate);
+            },
+            error: function(xhr, textStatus, errorThrown){
+                // エラー処理
+                alert("通信エラーが発生しました。");
+            }
+    });
+
+    if(data[0].bidPrice != "0"){
+        var kabuka_rate_data = data[0].bidPrice;
+        $('#user_ryou').prop('disabled',false);
+        $('#user_ryou_message').text("実際の購入金額計算できます。");
+        $('#kingaku_keisan').on('click',function(){
+            kainekeisan(kabuka_rate_data,fx_rate);
+        })
+    }
+}
 
 function dateChange(){
-    drawChart();
+    // drawChart();
     aveData();
+    // kainecheck();
 }
 
 dateChange();
@@ -453,7 +585,7 @@ dateChange();
             <td id="askSize"></td>
         </tr>
         <tr>
-            <th>前日終値買値：</th>
+            <th>前日終値終了日時：</th>
             <td id="lastUpdated"></td>
         </tr>
         <tr>
@@ -493,5 +625,12 @@ dateChange();
 <div id='appendVolume'></div>
 <!-- 1日レンジを配置 -->
 <div id='gct_sample_bar'></div>
+<p>実際購入金額</p>
+<p id="kounyu_kabuka_rate"></p>
+<p>USDレート</p>
+<p id="fx_rate"></p>
+購入量<input type="number" id="user_ryou" disabled><sub id="user_ryou_message">取引時間外ため使用できません。</sub>
+<input type="button" id="kingaku_keisan" value="計算">
+<p id="goukei"></p>
 <a class="btn-outline-primary btn" href="{{route('Meigara.index',[''])}}"><i class="fas fa-cog"></i>一覧戻る</a>
 @endsection
