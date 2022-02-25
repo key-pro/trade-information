@@ -36,11 +36,11 @@ Route::group(
     }
 );
 
-
 Route::get("/Meigara",[App\Http\Controllers\MeigaraController::class,"index"])->name("Meigara.index");
 Route::get("/MeigaraCategorys",[App\Http\Controllers\MeigaraCategoryController::class,"index"])->name("MeigaraCategory.index");
 Route::get("/Meigara/{meigara}/show",[App\Http\Controllers\MeigaraController::class,"show"])->name("Meigara.show");
 Route::get("/FX",[App\Http\Controllers\FxController::class,"index"])->name("FX.index");
+Route::get("/FX/TEST",[App\Http\Controllers\FxController::class,"index_test"])->name("FX.index_test");
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

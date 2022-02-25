@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "87007d07e57cf240dbd9fa0b8d5c422a",
+    "content-hash": "2afd9652ad3d15b6dff1e3a2b07e9882",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1353,6 +1353,64 @@
                 "source": "https://github.com/guzzle/psr7/tree/2.0.0"
             },
             "time": "2021-06-30T20:03:07+00:00"
+        },
+        {
+            "name": "houseofapis/currencyapi",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/houseofapis/currencyapi-php.git",
+                "reference": "ac707f232fbc8f922f9ac5a5c62a928e4677c726"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/houseofapis/currencyapi-php/zipball/ac707f232fbc8f922f9ac5a5c62a928e4677c726",
+                "reference": "ac707f232fbc8f922f9ac5a5c62a928e4677c726",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-simplexml": "*",
+                "php": ">=7.1.0"
+            },
+            "require-dev": {
+                "php-mock/php-mock-phpunit": "^2.6",
+                "phpunit/phpunit": "^7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "HouseOfApis\\CurrencyApi\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Oli Girling",
+                    "email": "support@currencyapi.net",
+                    "homepage": "https://currencyapi.net",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Composer package for the CurrencyApi.net JSON & XML live currency feed",
+            "homepage": "https://currencyapi.net",
+            "keywords": [
+                "api",
+                "crypto",
+                "currency",
+                "feed",
+                "json currency",
+                "live-rates"
+            ],
+            "support": {
+                "issues": "https://github.com/houseofapis/currencyapi-php/issues",
+                "source": "https://github.com/houseofapis/currencyapi-php/tree/v1.0.1"
+            },
+            "time": "2020-03-23T22:56:03+00:00"
         },
         {
             "name": "laravel/framework",

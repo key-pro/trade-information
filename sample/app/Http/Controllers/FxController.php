@@ -11,6 +11,10 @@ class FxController extends Controller
         return view("FX.index");
     }
 
+    public function index_test(){
+        return view("FX.index2");
+    }
+
     public function rateData(Request $request){
         $apikey = config("custom.iex_api_key");
         $symbol = $request->input("symbol");
