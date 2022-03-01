@@ -284,8 +284,9 @@ function aveData_onajax_success(result,textStatus){
     //ボリンジャーバンド
     var c = 0;
     var sma_bb = [];
+    const BB_DATE_SPAN = 20;
     for(var m = result.length - 50; m < result.length - 30; m++){
-        for(var n = 0; n < 20; n++){
+        for(var n = 0; n < BB_DATE_SPAN; n++){
             if(result[m + n].close != ''){
                 temp = temp + parseFloat(result[m+n].close);
                 divide++
@@ -297,24 +298,31 @@ function aveData_onajax_success(result,textStatus){
         divide = 0;
     }
 
-    var bb_date = 20;
     var averaound = 2;
     var sigma = [];
-    var sum_x = 0;
-    var sum_bay = 0;
     c = 0;
     for(var m = result.length - 50; m < result.length -30;  m++){
-        for(var i = 0; i < 20; i++){
-            if(result[m + n].close != ''){
-                sum_x = sum_x + parseFloat(result[m + n].close);
+        var sum_x = 0;
+        var sum_bay = 0;
+        // console.log(m);
+        for(var i = 0; i < BB_DATE_SPAN; i++){
+            if(result[m + i].close != ''){
+                sum_x = sum_x + parseFloat(result[m + i].close);
                 divide++
             }
         }
-        xm = sum_x / n;
-        for(var m = result.length - 50; m < result.length - 30; m++){
-            sum_bay += (parseFloat(result[m+n].close) - xm) ^2;
-        } 
-        sigma[c] = sum_bay / bb_date;
+        xm = sum_x / BB_DATE_SPAN;
+        for(var i = 0; i < BB_DATE_SPAN; i++){
+            sum_bay += ((parseFloat(result[m + i].close) - xm) ** 2);
+            // if(sum_bay < 0){
+                // console.log(result[m + i].close);
+            // }
+        }
+        // var work1 = Math.sqrt( sum_bay/ BB_DATE_SPAN);
+        // if(isNaN(work1)){
+            // console.log(sum_bay);
+        // }
+        sigma[c] = Math.sqrt( sum_bay/ BB_DATE_SPAN);
         c++;
     }
 
@@ -325,8 +333,8 @@ function aveData_onajax_success(result,textStatus){
     for(var i = 0; i < 30; i++){
         sma_p1[i] = sma_bb[i] + sigma[i];
         sma_p2[i] = sma_bb[i] + sigma[i] * 2;
-        sma_m1 = sma_bb[i] - sigma[i];
-        sma_m2 = sma_bb[i] - sigma[i] * 2;
+        sma_m1[i] = sma_bb[i] - sigma[i];
+        sma_m2[i] = sma_bb[i] - sigma[i] * 2;
     }
     //for文をまとめるため、出来高棒グラフの処理もここで行う
     //出来高を保持する配列
@@ -339,6 +347,45 @@ function aveData_onajax_success(result,textStatus){
             dates[s] = String(result[s].date);
         }
     }
+
+    //MACD
+    var c = 0;
+    var macd_ema = [];
+    var macd_sma = [];
+    var insertingData_MD = new Array(20);
+    const MACD_DATE_SPAN = 20;
+    for(var m = result.length - 50; m < result.length - 30; m++){
+
+        for(var n = 0; n < MACD_DATE_SPAN; n++){
+            if(result[m + n].close != ''){
+                macd_val_left = result[m + n].close;
+                divide++
+            }
+        }
+
+        for(var n = 0; n < MACD_DATE_SPAN + 1; n++){
+            if(result[m + n].close != ''){
+                macd_val_right = result[m + n].close;
+                divide++
+            }
+        }
+
+        for(var n = 0; n < MACD_DATE_SPAN; n++){
+            if(result[m + n].close != ''){
+                 macd_sma[c] = (result[m + n].close) / MACD_DATE_SPAN;
+                divide++
+            }
+        }
+
+        macd_ema[c] = macd_val_left / macd_val_right;
+        // console.log(macd_ema);
+        // console.log(macd_sma);
+        c++;
+        temp = 0;
+        divide = 0;
+    }
+
+
     //配列insertingDataの中に、[安値、始値、高値、終値、５日移動平均線、２５日移動平均線、５０日移動平均線、１００日移動平均線、２００日移動平均線]の形で値を入れ込む
     for(var a = 0; a < 30; a++){
         insertingData[a] = [
@@ -360,27 +407,51 @@ function aveData_onajax_success(result,textStatus){
             parseFloat(result[a + length - 30].close),
             parseFloat(result[a + length - 30].high),
             sma_bb[a],
-            sigma[a],
+            // sigma[a],
             sma_p1[a],
             sma_p2[a],
             sma_m1[a],
             sma_m2[a]
         ];
+        
         // console.log(ave[0][a],ave[1][a],ave[2][a]);
+    }
+    for(var b = 0; b < 20; b++){
+        insertingData_MD[b] = [
+            dates[b + length - 30],
+            parseFloat(result[b + length - 30].low),
+            parseFloat(result[b + length - 30].open),
+            parseFloat(result[b + length - 30].close),
+            parseFloat(result[b + length - 30].high),
+            macd_ema[b],
+            macd_sma[b],
+        ];
     }
     //チャート描画用の配列の中に、insertingDataの値を入れ込む
     //最古の50日分のデータまでは移動平均線のデータが揃っていないので、取り除く
     for (var i = 0; i < insertingData.length; i++){
         chartData.addRow(insertingData[i]);
     }
+
+    //ボリンジャーバンド用値と日付のためのカラムを作成
     var chartData_BB = new google.visualization.DataTable();
-    //出来高の値と日付のためのカラムを作成
     chartData_BB.addColumn('string');
-    for(var i =0; i < 10; i++){
+    for(var i = 0; i < 9; i++){
         chartData_BB.addColumn('number');
     }
+    
     for (var i = 0; i < insertingData_BB.length; i++){
         chartData_BB.addRow(insertingData_BB[i]);
+    }
+    //MACD用値と日付のためのカラムを作成
+    var chartData_MD = new google.visualization.DataTable();
+    chartData_MD.addColumn('string');
+    for(var i = 0; i < 6; i++){
+        chartData_MD.addColumn('number');
+    }
+    
+    for (var i = 0; i < insertingData_MD.length; i++){
+        chartData_MD.addRow(insertingData_MD[i]);
     }
     
     //チャートの見た目に関する記述、詳細は公式ドキュメントをご覧になってください
@@ -492,10 +563,78 @@ function aveData_onajax_success(result,textStatus){
                 type: "line",
                 color: 'darkgreen',                
             },
-            10:{
+            // 10:{
+            //     type: "line",
+            //     color: 'Yellow',                
+            // }
+        } 
+    };
+
+    //チャートの見た目に関する記述、詳細は公式ドキュメントをご覧になってください
+    var options_MD = {
+        chartArea:{left:80,top:10,right:80,bottom:10},
+        colors: ['#003A76'],
+        legend: {
+            position: 'none',
+        },
+        vAxis:{
+            viewWindowMode:'maximized'
+        },
+        hAxis: {
+            format: 'yy/MM/dd',
+            direction: -1,
+        },
+        bar: { 
+            groupWidth: '100%' 
+        },
+        width: 1000,
+        height: 500,
+        lineWidth: 2,
+        curveType: 'function',
+        //チャートのタイプとして、ローソク足を指定
+        seriesType: "candlesticks",  
+        //ローソク足だでなく、線グラフも三種類表示することを記述
+        series: {
+            1:{
                 type: "line",
-                color: 'Yellow',                
-            }
+                color: 'green',
+            },
+            2:{
+                type: "line",
+                color: 'red',                
+            },
+            3:{
+                type: "line",
+                color: 'orange',                
+            },
+            4:{
+                type: "line",
+                color: 'blue',                
+            },
+            5:{
+                type: "line",
+                color: 'navy',                
+            },
+            6:{
+                type: "line",
+                color: 'brown',                
+            },
+            7:{
+                type: "line",
+                color: 'lightgreen',                
+            },
+            // 8:{
+            //     type: "line",
+            //     color: 'lightblue',                
+            // },
+            // 9:{
+            //     type: "line",
+            //     color: 'darkgreen',                
+            // },
+            // 10:{
+            //     type: "line",
+            //     color: 'Yellow',                
+            // }
         } 
     };
     //描画の処理
@@ -505,6 +644,11 @@ function aveData_onajax_success(result,textStatus){
     //描画の処理(ボリンジャーバンド)
     var chart_BB = new google.visualization.ComboChart(document.getElementById('appendMain_BB'));
     chart_BB.draw(chartData_BB, options_BB);
+
+    //描画の処理(MACD)
+    var chart_MD = new google.visualization.ComboChart(document.getElementById('appendMain_MD'));
+    chart_MD.draw(chartData_MD, options_MD);
+
     //出来高棒グラフを作成する関数を呼び出し
     volumeChart(volume, dates, length);
 }
@@ -763,15 +907,19 @@ function kainecheck(data){
     <option value="180">3時間</option>
     <option value="240">4時間</option>
 </select>
-<div id="chart_div" style="width: 900px; height: 900px;"></div>
-<!-- ローソク足及び移動平均線グラフを配置 -->
-<div id='appendMain'></div>
-<!-- ローソク足及び移動平均線グラフを配置 -->
-<div id='appendMain_BB'></div>
-<!-- 出来高の棒グラフを配置 -->
-<div id='appendVolume'></div>
-<!-- 1日レンジを配置 -->
-<div id='gct_sample_bar'></div>
+<div class="boxContainer">
+    <div class="item" id="chart_div" style="width: 900px; height: 900px;"></div>
+    <!-- ローソク足及び移動平均線グラフを配置 -->
+    <div class="item" id='appendMain'></div>
+    <!-- ローソク足及び移動平均線グラフを配置 -->
+    <div class="item" id='appendMain_BB'></div>
+     <!-- ローソク足及び移動平均線グラフを配置 -->
+     <div class="item" id='appendMain_MD'></div>
+    <!-- 出来高の棒グラフを配置 -->
+    <div class="item" id='appendVolume'></div>
+    <!-- 1日レンジを配置 -->
+    <div class="item" id='gct_sample_bar'></div>
+</div>
 <p>実際購入金額</p>
 <p id="kounyu_kabuka_rate"></p>
 <p>USDレート</p>

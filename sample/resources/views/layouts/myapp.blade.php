@@ -25,7 +25,7 @@
                 <li><a href='/Meigara/9/show'>アメリカ株一覧</a></li>
                 <li><a href='/Meigara'>銘柄カテゴリ</a></li>
                 <li><a href='/FX'>FX通貨一覧</a></li>
-                <li><a href=”#”>Access</a></li>
+                <li><a href='/Tradingrules'>市場取引ルール</a></li>
                 <li><a href=”#”>Blog</a></li>
                 <input id="btn-mode" type="checkbox"> ダークモード    
             </ul>

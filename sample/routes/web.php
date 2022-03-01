@@ -41,6 +41,7 @@ Route::get("/MeigaraCategorys",[App\Http\Controllers\MeigaraCategoryController::
 Route::get("/Meigara/{meigara}/show",[App\Http\Controllers\MeigaraController::class,"show"])->name("Meigara.show");
 Route::get("/FX",[App\Http\Controllers\FxController::class,"index"])->name("FX.index");
 Route::get("/FX/TEST",[App\Http\Controllers\FxController::class,"index_test"])->name("FX.index_test");
+Route::get("Tradingrules",[App\Http\Controllers\TradingrulesController::class,"show"])->name("Tradingrules.show");
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
