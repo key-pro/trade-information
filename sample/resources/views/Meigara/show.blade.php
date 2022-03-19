@@ -59,7 +59,7 @@ $('#chart_date').val(date);
         },
         error: function(xhr, textStatus, errorThrown){
         // エラー処理
-        alert("通信エラーが発生しました。");
+        alert("通信1エラーが発生しました。");
         }
     });
     
@@ -100,7 +100,7 @@ function chart_fetch_draw(date,chartInterval){
         },
         error: function(xhr, textStatus, errorThrown){
         // エラー処理
-        alert("通信エラーが発生しました。");
+        alert("通信2エラーが発生しました。");
         }
     });
     // console.log(candle_data);
@@ -350,39 +350,86 @@ function aveData_onajax_success(result,textStatus){
 
     //MACD
     var c = 0;
-    var macd_ema = [];
+    var macd_ema_fast = [];
+    var macd_ema_slow = [];
     var macd_sma = [];
+    var macd_history = [];
     var insertingData_MD = new Array(20);
-    const MACD_DATE_SPAN = 20;
+    var insertingData_MD_history = new Array(20);
+    const MACD_DATE_SPAN_FAST = 5;
+    const MACD_DATE_SPAN_SLOW = 20;
+    const SIGNAL_SPAN = 9;
+    var alpha_fast = 2 / (MACD_DATE_SPAN_FAST + 1);
+    var alpha_slow = 2 / (MACD_DATE_SPAN_SLOW + 1);
+
     for(var m = result.length - 50; m < result.length - 30; m++){
-
-        for(var n = 0; n < MACD_DATE_SPAN; n++){
-            if(result[m + n].close != ''){
-                macd_val_left = result[m + n].close;
-                divide++
+        var macd_val_ema = 0;
+        if(c >= 0){
+            for(var n = 0; n < MACD_DATE_SPAN_FAST; n++){
+                if(result[m + n].close != ''){
+                    macd_val_ema += result[m + n].close;
+                }
             }
+            macd_val_ema += result[m + MACD_DATE_SPAN_FAST -1].close;
+            macd_ema_fast[c] = macd_val_ema / (MACD_DATE_SPAN_FAST + 1);
+        }else{
+            macd_ema_fast[c - 1] + alpha_fast * (result[m + n].close - macd_ema[c - 1]);
         }
 
-        for(var n = 0; n < MACD_DATE_SPAN + 1; n++){
-            if(result[m + n].close != ''){
-                macd_val_right = result[m + n].close;
-                divide++
+        macd_val_ema = 0;
+        if(c >= 0){
+            for(var n = 0; n < MACD_DATE_SPAN_SLOW; n++){
+                if(result[m + n].close != ''){
+                    macd_val_ema += result[m + n].close;
+                }
             }
+            macd_val_ema += result[m + MACD_DATE_SPAN_SLOW -1].close;
+            macd_ema_slow[c] = macd_val_ema / (MACD_DATE_SPAN_SLOW + 1);
+        }else{
+            macd_ema_slow[c - 1] + alpha_slow * (result[m + n].close - macd_ema[c - 1]);
         }
 
-        for(var n = 0; n < MACD_DATE_SPAN; n++){
+        var sma_sum = 0;
+        for(var n = 0; n < SIGNAL_SPAN; n++){
             if(result[m + n].close != ''){
-                 macd_sma[c] = (result[m + n].close) / MACD_DATE_SPAN;
-                divide++
+                sma_sum += result[m + n].close;
             }
         }
-
-        macd_ema[c] = macd_val_left / macd_val_right;
-        // console.log(macd_ema);
-        // console.log(macd_sma);
+        macd_sma[c] = sma_sum / SIGNAL_SPAN;
+        macd_history[c] =  (macd_ema_fast[c] - macd_ema_slow[c]);
         c++;
-        temp = 0;
-        divide = 0;
+    }
+    
+
+    //RSI
+    const RSI_SPAN = 15;
+    c = 0;
+    var rsi = [];
+    var insertingData_RSI = new Array(20);
+    // var highest = 0;
+    // var lowest = 100000;
+    // var close_sum = 0;
+    for(var i = result.length - RSI_SPAN - 20; i < result.length - RSI_SPAN; i++){
+        var agari = 0;
+        var sagari = 0;
+        // close_sum += result[i + RSI_SPAN - 1].close;
+        for(var j = 0; j < RSI_SPAN; j++){
+            // if(result[m + n].close > highest){
+            //     highest = result[m + n].close; 
+            // }else if(result[m + n].close < lowest){
+            //     lowest = result[m + n].close;
+            // }
+            var diff = result[i + j].close - result[i + j].open;
+            if(diff > 0){
+                agari += diff; 
+            }else{
+                sagari += Math.abs(diff);
+            }
+        }
+        var agari_ave = agari / RSI_SPAN;
+        var sagari_ave = sagari / RSI_SPAN;
+        rsi[c] = agari_ave / (agari_ave + sagari_ave) * 100;
+        c++;
     }
 
 
@@ -413,7 +460,6 @@ function aveData_onajax_success(result,textStatus){
             sma_m1[a],
             sma_m2[a]
         ];
-        
         // console.log(ave[0][a],ave[1][a],ave[2][a]);
     }
     for(var b = 0; b < 20; b++){
@@ -423,8 +469,30 @@ function aveData_onajax_success(result,textStatus){
             parseFloat(result[b + length - 30].open),
             parseFloat(result[b + length - 30].close),
             parseFloat(result[b + length - 30].high),
-            macd_ema[b],
-            macd_sma[b],
+            macd_ema_fast[b],
+            macd_ema_slow[b],
+        ];
+    }
+
+    for(var b = 0; b < 20; b++){
+        insertingData_MD_history[b] = [
+            dates[b + length - 30],
+            // parseFloat(result[b + length - 30].low),
+            // parseFloat(result[b + length - 30].open),
+            // parseFloat(result[b + length - 30].close),
+            // parseFloat(result[b + length - 30].high),
+            macd_history[b]
+        ];
+    }
+
+    for(var b = 0; b < 20; b++){
+        insertingData_RSI[b] = [
+            dates[b + length - 30],
+            // parseFloat(result[b + length - 30].low),
+            // parseFloat(result[b + length - 30].open),
+            // parseFloat(result[b + length - 30].close),
+            // parseFloat(result[b + length - 30].high),
+            rsi[b]
         ];
     }
     //チャート描画用の配列の中に、insertingDataの値を入れ込む
@@ -453,6 +521,65 @@ function aveData_onajax_success(result,textStatus){
     for (var i = 0; i < insertingData_MD.length; i++){
         chartData_MD.addRow(insertingData_MD[i]);
     }
+
+    //MACD用値と日付のためのカラムを作成ヒストグラム
+    var chartData_MD_history = new google.visualization.DataTable();
+    chartData_MD_history.addColumn('string');
+    for(var i = 0; i < 1; i++){
+        chartData_MD_history.addColumn('number');
+    }
+    
+    for (var i = 0; i < insertingData_MD_history.length; i++){
+        chartData_MD_history.addRow(insertingData_MD_history[i]);
+    }
+
+    //RSI用値と日付のためのカラムを作成
+    // var chartData_RSI = new google.visualization.DataTable();
+    // chartData_RSI.addColumn('string');
+    // for(var i = 0; i < 1; i++){
+    //     chartData_RSI.addColumn('number');
+    // }
+
+    //描画の処理RSI
+    // google.load('current', {packages: ['corechart']});
+    // google.setOnLoadCallback(drawChart);
+    // function drawChart() {
+    //     var data = google.visualization.arrayToDataTable([ //グラフデータの指定
+    //     ['', 'RSI'],
+    //     [insertingData_RSI]
+    //     ]);
+
+    //     var options_RSI = { //オプションの指定
+    //     title: '折れ線グラフサンプル'
+    //     };
+    // }
+    // var chart_RSI = new google.visualization.LineChart(document.getElementById('appendMain_RSI'));
+    // chart_RSI.draw(chart_RSI, options_RSI);
+
+    google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Year', 'Sales', 'Expenses'],
+          ['2004',  1000,      400],
+          ['2005',  1170,      460],
+          ['2006',  660,       1120],
+          ['2007',  1030,      540]
+        ]);
+
+        var options = {
+          title: 'Company Performance',
+          curveType: 'function',
+          legend: { position: 'bottom' }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('appendMain_RSI'));
+
+        chart.draw(data, options);
+      }
+    
+
     
     //チャートの見た目に関する記述、詳細は公式ドキュメントをご覧になってください
     var options = {
@@ -603,26 +730,26 @@ function aveData_onajax_success(result,textStatus){
                 type: "line",
                 color: 'red',                
             },
-            3:{
-                type: "line",
-                color: 'orange',                
-            },
-            4:{
-                type: "line",
-                color: 'blue',                
-            },
-            5:{
-                type: "line",
-                color: 'navy',                
-            },
-            6:{
-                type: "line",
-                color: 'brown',                
-            },
-            7:{
-                type: "line",
-                color: 'lightgreen',                
-            },
+            // 3:{
+            //     type: "line",
+            //     color: 'orange',                
+            // },
+            // 4:{
+            //     type: "line",
+            //     color: 'blue',                
+            // },
+            // 5:{
+            //     type: "line",
+            //     color: 'navy',                
+            // },
+            // 6:{
+            //     type: "line",
+            //     color: 'brown',                
+            // },
+            // 7:{
+            //     type: "line",
+            //     color: 'lightgreen',                
+            // },
             // 8:{
             //     type: "line",
             //     color: 'lightblue',                
@@ -637,6 +764,141 @@ function aveData_onajax_success(result,textStatus){
             // }
         } 
     };
+    //チャートの見た目に関する記述、詳細は公式ドキュメントをご覧になってください
+    var options_MD_history = {
+        chartArea:{left:80,top:10,right:80,bottom:10},
+        colors: ['#003A76'],
+        legend: {
+            position: 'none',
+        },
+        vAxis:{
+            viewWindowMode:'maximized'
+        },
+        hAxis: {
+            format: 'yy/MM/dd',
+            direction: -1,
+        },
+        bar: { 
+            groupWidth: '100%' 
+        },
+        width: 1000,
+        height: 500,
+        lineWidth: 2,
+        curveType: 'function',
+        //チャートのタイプとして、ローソク足を指定
+        seriesType: "candlesticks",  
+        //ローソク足だでなく、線グラフも三種類表示することを記述
+        series: {
+            1:{
+                type: "line",
+                color: 'green',
+            },
+            // 2:{
+            //     type: "line",
+            //     color: 'red',                
+            // },
+            // 3:{
+            //     type: "line",
+            //     color: 'orange',                
+            // },
+            // 4:{
+            //     type: "line",
+            //     color: 'blue',                
+            // },
+            // 5:{
+            //     type: "line",
+            //     color: 'navy',                
+            // },
+            // 6:{
+            //     type: "line",
+            //     color: 'brown',                
+            // },
+            // 7:{
+            //     type: "line",
+            //     color: 'lightgreen',                
+            // },
+            // 8:{
+            //     type: "line",
+            //     color: 'lightblue',                
+            // },
+            // 9:{
+            //     type: "line",
+            //     color: 'darkgreen',                
+            // },
+            // 10:{
+            //     type: "line",
+            //     color: 'Yellow',                
+            // }
+        } 
+    };
+    //チャートの見た目に関する記述、詳細は公式ドキュメントをご覧になってください
+    var options_RSI = {
+        chartArea:{left:80,top:10,right:80,bottom:10},
+        colors: ['#003A76'],
+        legend: {
+            position: 'none',
+        },
+        vAxis:{
+            viewWindowMode:'maximized'
+        },
+        hAxis: {
+            format: 'yy/MM/dd',
+            direction: -1,
+        },
+        bar: { 
+            groupWidth: '100%' 
+        },
+        width: 1000,
+        height: 500,
+        lineWidth: 2,
+        curveType: 'function',
+        //チャートのタイプとして、ローソク足を指定
+        seriesType: "candlesticks",  
+        //ローソク足だでなく、線グラフも三種類表示することを記述
+        series: {
+            1:{
+                type: "line",
+                color: 'green',
+            },
+            2:{
+                type: "line",
+                color: 'red',                
+            },
+            3:{
+                type: "line",
+                color: 'orange',                
+            },
+            4:{
+                type: "line",
+                color: 'blue',                
+            },
+            5:{
+                type: "line",
+                color: 'navy',                
+            },
+            // 6:{
+            //     type: "line",
+            //     color: 'brown',                
+            // },
+            // 7:{
+            //     type: "line",
+            //     color: 'lightgreen',                
+            // },
+            // 8:{
+            //     type: "line",
+            //     color: 'lightblue',                
+            // },
+            // 9:{
+            //     type: "line",
+            //     color: 'darkgreen',                
+            // },
+            // 10:{
+            //     type: "line",
+            //     color: 'Yellow',                
+            // }
+        } 
+    };
+
     //描画の処理
     var chart = new google.visualization.ComboChart(document.getElementById('appendMain'));
     chart.draw(chartData, options);
@@ -648,6 +910,10 @@ function aveData_onajax_success(result,textStatus){
     //描画の処理(MACD)
     var chart_MD = new google.visualization.ComboChart(document.getElementById('appendMain_MD'));
     chart_MD.draw(chartData_MD, options_MD);
+
+    //描画の処理(MACD)ヒストグラム
+     var chart_MD_history = new google.visualization.Histogram(document.getElementById('appendMain_MD_history'));
+    chart_MD_history.draw(chartData_MD_history, options_MD_history);
 
     //出来高棒グラフを作成する関数を呼び出し
     volumeChart(volume, dates, length);
@@ -670,7 +936,7 @@ function aveData(){
         },
         error: function(xhr, textStatus, errorThrown){
             // エラー処理
-            alert("通信エラーが発生しました。");
+            alert("通信3エラーが発生しました。");
         }
     });
 }
@@ -722,15 +988,25 @@ function BarChart(data,chartInterval){
     var hostname = "{{ request()->getUriForPath('') }}";
     var chartInterval = chartInterval;
     var param_date = new Date();
+    // console.log(param_date);
     param_date.setDate(param_date.getDate() - 2);
     var param_Month = param_date.getMonth() + 1;
     var param_Month_str = "";
     if(param_Month >= 10){
         param_Month_str = param_Month.toString();
     }else{
-        param_Month_str = "0" + param_Month.toString()
+        param_Month_str = "0" + param_Month.toString();
     }
-    param_date = param_date.getFullYear() + param_Month_str + param_date.getDate();
+    if(param_date >= 10){
+        param_date_str = param_date.toString();
+    }else{
+        param_date_str = "0" + param_date.toString();
+    }
+    // console.log(param_Month_str);
+    // console.log(param_date_str);
+    param_date_str = param_date_str.substr(8,2);
+    // console.log(param_date_str);
+    param_date = param_date.getFullYear() + param_Month_str + param_date_str;
     // console.log(param_date);
     // alert(hostname);
     var url = hostname + "/api/Meigara/chart_data?symbol=" + symbol + "&chartdate=" + param_date + "&chartInterval=" + chartInterval;
@@ -755,7 +1031,7 @@ function BarChart(data,chartInterval){
         },
         error: function(xhr, textStatus, errorThrown){
         // エラー処理
-        alert("通信エラーが発生しました。");
+        alert("通信4エラーが発生しました。");
         }
     });
 
@@ -798,7 +1074,7 @@ function fx_rate(){
             },
             error: function(xhr, textStatus, errorThrown){
                 // エラー処理
-                alert("通信エラーが発生しました。");
+                alert("通信5エラーが発生しました。");
             }
     });
 }
@@ -839,7 +1115,7 @@ function kainecheck(data){
             },
             error: function(xhr, textStatus, errorThrown){
                 // エラー処理
-                alert("通信エラーが発生しました。");
+                alert("通信6エラーが発生しました。");
             }
     });
 
@@ -913,12 +1189,17 @@ function kainecheck(data){
     <div class="item" id='appendMain'></div>
     <!-- ローソク足及び移動平均線グラフを配置 -->
     <div class="item" id='appendMain_BB'></div>
-     <!-- ローソク足及び移動平均線グラフを配置 -->
-     <div class="item" id='appendMain_MD'></div>
+    <!-- ローソク足及び移動平均線グラフを配置 -->
+    <div class="item" id='appendMain_MD'></div>
+    <!-- ローソク足及び移動平均線グラフを配置 -->
+    <div class="item" id='appendMain_MD_history'></div>
+    <!-- ローソク足及び移動平均線グラフを配置 -->
+    <div class="item" id='appendMain_RSI'></div>
     <!-- 出来高の棒グラフを配置 -->
     <div class="item" id='appendVolume'></div>
     <!-- 1日レンジを配置 -->
     <div class="item" id='gct_sample_bar'></div>
+    
 </div>
 <p>実際購入金額</p>
 <p id="kounyu_kabuka_rate"></p>
