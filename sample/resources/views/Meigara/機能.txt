@@ -8,3 +8,35 @@ RSI
 MACD
 テクニカル分析サマリー
 実際の株購入金額（ユーザーがリアルタイム入力された数量で計算する）
+
+
+
+api_exchange()
+    fx_rate();
+    kainecheck();
+-------------end
+drawChart()
+    aveData()
+    chart_fetch_draw()
+-------end
+
+chart_fetch_draw()
+    ComboChart()
+----------end
+
+aveData();
+    aveData_onajax_success()
+--------end
+
+aveData_onajax_success
+fx_rate()
+volumeChart
+kainekeisan
+
+fx_rate
+--------
+---------end
+
+kainecheck
+---------
+---------end

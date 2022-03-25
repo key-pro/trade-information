@@ -6,6 +6,7 @@
 @endsection
 @section('header_js')
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<!-- <script src="js/BarChart.js"></script> -->
 <script type="text/javascript">
 var candle_data = [];
 /** 現在のDateオブジェクト作成 */
@@ -405,7 +406,8 @@ function aveData_onajax_success(result,textStatus){
     const RSI_SPAN = 15;
     c = 0;
     var rsi = [];
-    var insertingData_RSI = new Array(20);
+    var insertingData_RSI = new Array(21);
+    insertingData_RSI[0] =  ['', 'RSI']; 
     // var highest = 0;
     // var lowest = 100000;
     // var close_sum = 0;
@@ -447,6 +449,7 @@ function aveData_onajax_success(result,textStatus){
             ave[3][a],
             ave[4][a]
         ];
+
         insertingData_BB[a] = [
             dates[a + length - 30],
             parseFloat(result[a + length - 30].low),
@@ -462,6 +465,7 @@ function aveData_onajax_success(result,textStatus){
         ];
         // console.log(ave[0][a],ave[1][a],ave[2][a]);
     }
+
     for(var b = 0; b < 20; b++){
         insertingData_MD[b] = [
             dates[b + length - 30],
@@ -486,7 +490,7 @@ function aveData_onajax_success(result,textStatus){
     }
 
     for(var b = 0; b < 20; b++){
-        insertingData_RSI[b] = [
+        insertingData_RSI[b + 1] = [
             dates[b + length - 30],
             // parseFloat(result[b + length - 30].low),
             // parseFloat(result[b + length - 30].open),
@@ -534,52 +538,30 @@ function aveData_onajax_success(result,textStatus){
     }
 
     //RSI用値と日付のためのカラムを作成
-    // var chartData_RSI = new google.visualization.DataTable();
-    // chartData_RSI.addColumn('string');
-    // for(var i = 0; i < 1; i++){
-    //     chartData_RSI.addColumn('number');
-    // }
+    var chartData_RSI = new google.visualization.DataTable();
+    chartData_RSI.addColumn('string');
+    for(var i = 0; i < 1; i++){
+        chartData_RSI.addColumn('number');
+    }
 
     //描画の処理RSI
-    // google.load('current', {packages: ['corechart']});
-    // google.setOnLoadCallback(drawChart);
-    // function drawChart() {
-    //     var data = google.visualization.arrayToDataTable([ //グラフデータの指定
-    //     ['', 'RSI'],
-    //     [insertingData_RSI]
-    //     ]);
+    google.charts.load('current', {packages: ['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable( 
+        //グラフデータの指定
+        // [''],
+            insertingData_RSI
+        );
 
-    //     var options_RSI = { //オプションの指定
-    //     title: '折れ線グラフサンプル'
-    //     };
-    // }
-    // var chart_RSI = new google.visualization.LineChart(document.getElementById('appendMain_RSI'));
-    // chart_RSI.draw(chart_RSI, options_RSI);
-
-    google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart);
-
-      function drawChart() {
-        var data = google.visualization.arrayToDataTable([
-          ['Year', 'Sales', 'Expenses'],
-          ['2004',  1000,      400],
-          ['2005',  1170,      460],
-          ['2006',  660,       1120],
-          ['2007',  1030,      540]
-        ]);
-
-        var options = {
-          title: 'Company Performance',
-          curveType: 'function',
-          legend: { position: 'bottom' }
+        var options_RSI = { 
+            //オプションの指定
+            title: '折れ線グラフサンプル'
         };
 
-        var chart = new google.visualization.LineChart(document.getElementById('appendMain_RSI'));
-
-        chart.draw(data, options);
-      }
-    
-
+        var chart_RSI = new google.visualization.LineChart(document.getElementById('appendMain_RSI'));
+        chart_RSI.draw(data, options_RSI);
+    }
     
     //チャートの見た目に関する記述、詳細は公式ドキュメントをご覧になってください
     var options = {
@@ -975,7 +957,32 @@ function volumeChart(volume, dates, length){
         chart.draw(chartData, options);
 }
 
-    
+function fx_rate(){
+    var hostname = "{{ request()->getUriForPath('') }}";
+    var symbol = "USDJPY";
+    var url = hostname + "/api/FX/rates?symbol=" + symbol;
+     // console.log(symbol)
+    // console.log(hostname);
+    // console.log(url);
+    $.ajax({
+            url: url,
+            dataType: "json",
+            cache: false,
+            async: false,
+            success: function(data, textStatus){
+                var rate = data[0].rate;
+                //Math.ceil(data[0].rate,1)
+                // console.log(rate);
+                $('#fx_rate').text(rate);
+                //リアルタイム購入入力チェック用計算用
+            },
+            error: function(xhr, textStatus, errorThrown){
+                // エラー処理
+                alert("通信5エラーが発生しました。");
+            }
+    });
+}
+
 function BarChart(data,chartInterval){    
     // console.log(data);
     var takane = 0;
@@ -1039,7 +1046,7 @@ function BarChart(data,chartInterval){
     google.setOnLoadCallback(
         function() {
             var data = google.visualization.arrayToDataTable([
-            [       '', 'レンジ幅'],
+            ['', 'レンジ幅'],
             ['1日レンジ幅',takane - ototoi_owarine]
             ]);
 
@@ -1051,32 +1058,6 @@ function BarChart(data,chartInterval){
             chart.draw(data, options);
         }
     );
-}
-
-function fx_rate(){
-    var hostname = "{{ request()->getUriForPath('') }}";
-    var symbol = "USDJPY";
-    var url = hostname + "/api/FX/rates?symbol=" + symbol;
-     // console.log(symbol)
-    // console.log(hostname);
-    // console.log(url);
-    $.ajax({
-            url: url,
-            dataType: "json",
-            cache: false,
-            async: false,
-            success: function(data, textStatus){
-                var rate = data[0].rate;
-                //Math.ceil(data[0].rate,1)
-                // console.log(rate);
-                $('#fx_rate').text(rate);
-                //リアルタイム購入入力チェック用計算用
-            },
-            error: function(xhr, textStatus, errorThrown){
-                // エラー処理
-                alert("通信5エラーが発生しました。");
-            }
-    });
 }
 
 function kainekeisan(kabuka_rate_data,fx_rate){
@@ -1098,7 +1079,7 @@ function kainecheck(data){
     var hostname = "{{ request()->getUriForPath('') }}";
     var symbol = "USDJPY";
     var url = hostname + "/api/FX/rates?symbol=" + symbol;
-     // console.log(symbol)
+     // console.log(symbol);
     // console.log(hostname);
     // console.log(url);
     var fx_rate = 0;

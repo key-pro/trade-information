@@ -405,7 +405,8 @@ function aveData_onajax_success(result,textStatus){
     const RSI_SPAN = 15;
     c = 0;
     var rsi = [];
-    var insertingData_RSI = new Array(20);
+    var insertingData_RSI = new Array(21);
+    insertingData_RSI[0] =  ['', 'RSI']; 
     // var highest = 0;
     // var lowest = 100000;
     // var close_sum = 0;
@@ -486,7 +487,7 @@ function aveData_onajax_success(result,textStatus){
     }
 
     for(var b = 0; b < 20; b++){
-        insertingData_RSI[b] = [
+        insertingData_RSI[b + 1] = [
             dates[b + length - 30],
             // parseFloat(result[b + length - 30].low),
             // parseFloat(result[b + length - 30].open),
@@ -514,7 +515,7 @@ function aveData_onajax_success(result,textStatus){
     //MACD用値と日付のためのカラムを作成
     var chartData_MD = new google.visualization.DataTable();
     chartData_MD.addColumn('string');
-    for(var i = 0; i < 1; i++){
+    for(var i = 0; i < 6; i++){
         chartData_MD.addColumn('number');
     }
     
@@ -539,9 +540,24 @@ function aveData_onajax_success(result,textStatus){
     for(var i = 0; i < 1; i++){
         chartData_RSI.addColumn('number');
     }
-    
-    for (var i = 0; i < insertingData_RSI.length; i++){
-        chartData_RSI.addRow(insertingData_RSI[i]);
+
+    //描画の処理RSI
+    google.charts.load('current', {packages: ['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable( 
+        //グラフデータの指定
+        // [''],
+            insertingData_RSI
+        );
+
+        var options_RSI = { 
+            //オプションの指定
+            title: '折れ線グラフサンプル'
+        };
+
+        var chart_RSI = new google.visualization.LineChart(document.getElementById('appendMain_RSI'));
+        chart_RSI.draw(data, options_RSI);
     }
     
     //チャートの見た目に関する記述、詳細は公式ドキュメントをご覧になってください
@@ -823,22 +839,22 @@ function aveData_onajax_success(result,textStatus){
                 type: "line",
                 color: 'green',
             },
-            // 2:{
-            //     type: "line",
-            //     color: 'red',                
-            // },
-            // 3:{
-            //     type: "line",
-            //     color: 'orange',                
-            // },
-            // 4:{
-            //     type: "line",
-            //     color: 'blue',                
-            // },
-            // 5:{
-            //     type: "line",
-            //     color: 'navy',                
-            // },
+            2:{
+                type: "line",
+                color: 'red',                
+            },
+            3:{
+                type: "line",
+                color: 'orange',                
+            },
+            4:{
+                type: "line",
+                color: 'blue',                
+            },
+            5:{
+                type: "line",
+                color: 'navy',                
+            },
             // 6:{
             //     type: "line",
             //     color: 'brown',                
@@ -877,10 +893,6 @@ function aveData_onajax_success(result,textStatus){
     //描画の処理(MACD)ヒストグラム
      var chart_MD_history = new google.visualization.Histogram(document.getElementById('appendMain_MD_history'));
     chart_MD_history.draw(chartData_MD_history, options_MD_history);
-
-     //描画の処理RSI
-     var chart_RSI = new google.visualization.LineChart(document.getElementById('appendMain_RSI'));
-    chart_RSI.draw(chartData_RSI, options_RSI);
 
     //出来高棒グラフを作成する関数を呼び出し
     volumeChart(volume, dates, length);
@@ -1006,7 +1018,7 @@ function BarChart(data,chartInterval){
     google.setOnLoadCallback(
         function() {
             var data = google.visualization.arrayToDataTable([
-            [       '', 'レンジ幅'],
+            ['', 'レンジ幅'],
             ['1日レンジ幅',takane - ototoi_owarine]
             ]);
 
