@@ -6,7 +6,7 @@
 @endsection
 @section('header_js')
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<!-- <script src="js/BarChart.js"></script> -->
+<!-- <script src="js/draw_bar_chart.js"></script> -->
 <script type="text/javascript">
 var candle_data = [];
 /** 現在のDateオブジェクト作成 */
@@ -16,7 +16,10 @@ var formatted = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`.replace(/\
 var date = formatted;
 $('#chart_date').val(date);
 
-    function api_exchange(){
+/**
+ * 株価取得と株価詳細表示
+ */
+function kabu_information(){
     var symbol = '{{ $meigara -> symbol }}';
     var hostname =  "{{ request()->getUriForPath('') }}";
     var url = hostname + "/api/Meigara/summary_data?symbol=" + symbol;
@@ -44,7 +47,7 @@ $('#chart_date').val(date);
             $('#kounyu_kabuka_rate').text(data[0].bidPrice);
              //リアルタイム購入入力チェック用為替レート
             fx_rate();
-            kainecheck(data);
+            kaine_check(data);
         }
         $('#lastUpdated').text((new Date(data[0].lastUpdated)).toString());
         $('#lastSalePrice').text(data[0].lastSalePrice);
@@ -66,12 +69,15 @@ $('#chart_date').val(date);
     
 }
 
-api_exchange();
+kabu_information();
 
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(drawChart);
 
-function chart_fetch_draw(date,chartInterval){
+/**
+ * 株価テクニカル分析データ生成と描画
+ */
+function kabu_chart_rousoku_and_kabu_range_value(date,chartInterval){
     var symbol = '{{ $meigara -> symbol }}';
     var hostname = "{{ request()->getUriForPath('') }}";
     // alert(hostname);
@@ -92,7 +98,7 @@ function chart_fetch_draw(date,chartInterval){
             }
         }
         //レンジ範囲値渡し
-        BarChart(data,chartInterval);
+        draw_bar_chart(data,chartInterval);
         //リアルタイム購入入力チェック
         // ComboChart(data);
         // console.log(candle_data);
@@ -114,7 +120,7 @@ function chart_fetch_draw(date,chartInterval){
     // ['Fri', 68, 66, 22, 15]
     // Treat first row as data as well.
     // ]
-    candle_data
+        candle_data
     , true);
 
     var options = {
@@ -135,8 +141,11 @@ function chart_fetch_draw(date,chartInterval){
     // }
 }
 
+/**
+ * 株価日時と時間変更時株価再取得
+ */
 function drawChart() {
-    aveData();
+    kabu_stock();
     
     var date1 = $('#chart_date').val();
     date2 = date1.replace(/-/g ,'');
@@ -145,11 +154,14 @@ function drawChart() {
     // console.log(chartInterval);
     // alert(url);
     if(date2 && chartInterval){
-        chart_fetch_draw(date2,chartInterval);
+        kabu_chart_rousoku_and_kabu_range_value(date2,chartInterval);
     }
 }
 
-function aveData_onajax_success(result,textStatus){
+/**
+ * 株価移動平均線描画
+ */
+function kabu_idou_ave_data(result,dates){
     // var day = new Date();
     // var ts278 = day.setDate(day.getDate() -278);
     // var ts178 = day.setDate(day.getDate() -178);
@@ -178,6 +190,7 @@ function aveData_onajax_success(result,textStatus){
     //         av5.push[result[i]];
     //     }
     // }
+
     //チャートに描画するための最終的なデータを入れる
     var chartData = new google.visualization.DataTable();
     //日付ようにString型のカラムを一つ、チャート描画用に数値型のカラムを７つ作成
@@ -189,7 +202,6 @@ function aveData_onajax_success(result,textStatus){
     var length = result.length;
     //描画用のデータを一時的に入れる
     var insertingData = new Array(30);
-    var insertingData_BB = new Array(30);
     //平均を出すための割り算の分母
     var divide = 0;
     //二次元配列aveに、平均線の日数と平均値を入れる
@@ -222,7 +234,7 @@ function aveData_onajax_success(result,textStatus){
         temp = 0;
         divide = 0;
     }
-    //2５日移動平均線の算出
+    //25日移動平均線の算出
     //上と同様の処理
     c = 0;
     for(var m = result.length - 55; m < length - 25; m++){
@@ -237,7 +249,7 @@ function aveData_onajax_success(result,textStatus){
         temp = 0;
         divide = 0;
     }
-    //５0日移動平均線の算出
+    //50日移動平均線の算出
     //上と同様の処理
     c = 0;
     for(var m = result.length - 80; m < length - 50; m++){
@@ -252,7 +264,7 @@ function aveData_onajax_success(result,textStatus){
         temp = 0;
         divide = 0;
     }
-    //１００日移動平均線の算出
+    //100日移動平均線の算出
     //上と同様の処理
     c = 0;
     for(var m = result.length - 130; m < length - 100; m++){
@@ -267,7 +279,7 @@ function aveData_onajax_success(result,textStatus){
         temp = 0;
         divide = 0;
     }
-    //２００日移動平均線の算出
+    //200日移動平均線の算出
     //上と同様の処理
     c = 0;
     for(var m = result.length - 230; m < length - 200; m++){
@@ -282,9 +294,95 @@ function aveData_onajax_success(result,textStatus){
         temp = 0;
         divide = 0;
     }
+
+    
+    //配列insertingDataの中に、[安値、始値、高値、終値、５日移動平均線、２５日移動平均線、５０日移動平均線、１００日移動平均線、２００日移動平均線]の形で値を入れ込む
+    for(var a = 0; a < 30; a++){
+        insertingData[a] = [
+            dates[a + length - 30],
+            parseFloat(result[a + length - 30].low),
+            parseFloat(result[a + length - 30].open),
+            parseFloat(result[a + length - 30].close),
+            parseFloat(result[a + length - 30].high),
+            ave[0][a],
+            ave[1][a],
+            ave[2][a],
+            ave[3][a],
+            ave[4][a]
+        ];
+    }
+
+
+    //チャート描画用の配列の中に、insertingDataの値を入れ込む
+    //最古の50日分のデータまでは移動平均線のデータが揃っていないので、取り除く
+    for (var i = 0; i < insertingData.length; i++){
+        chartData.addRow(insertingData[i]);
+    }
+
+    //チャートの見た目に関する記述、詳細は公式ドキュメントを参照
+    var options = {
+        chartArea:{left:80,top:10,right:80,bottom:10},
+        colors: ['#003A76'],
+        legend: {
+            position: 'none',
+        },
+        vAxis:{
+            viewWindowMode:'maximized'
+        },
+        hAxis: {
+            format: 'yy/MM/dd',
+            direction: -1,
+        },
+        bar: { 
+            groupWidth: '100%' 
+        },
+        width: 1000,
+        height: 500,
+        lineWidth: 2,
+        curveType: 'function',
+        //チャートのタイプとして、ローソク足を指定
+        seriesType: "candlesticks",  
+        //ローソク足だでなく、線グラフも三種類表示することを記述
+        series: {
+            1:{
+                type: "line",
+                color: 'green',
+            },
+            2:{
+                type: "line",
+                color: 'red',                
+            },
+            3:{
+                type: "line",
+                color: 'orange',                
+            },
+            4:{
+                type: "line",
+                color: 'blue',                
+            },
+            5:{
+                type: "line",
+                color: 'navy',                
+            }
+        } 
+    };
+    
+     //描画の処理
+    var chart = new google.visualization.ComboChart(document.getElementById('appendMain'));
+    chart.draw(chartData, options);
+}
+
+/**
+ * 株価ボリンジャーバンドデータ生成と描画
+ */
+function kabu_bollinger_band_data(result,dates){
     //ボリンジャーバンド
     var c = 0;
     var sma_bb = [];
+    var temp = 0;
+    var divide = 0;
+    var length = result.length;
+    var insertingData_BB = new Array(30);
     const BB_DATE_SPAN = 20;
     for(var m = result.length - 50; m < result.length - 30; m++){
         for(var n = 0; n < BB_DATE_SPAN; n++){
@@ -339,117 +437,9 @@ function aveData_onajax_success(result,textStatus){
     }
     //for文をまとめるため、出来高棒グラフの処理もここで行う
     //出来高を保持する配列
-    var volume = new Array();
-    //チャートの日付を保持する配列
-    var dates = new Array();
-    for(var s = 0; s < length; s++){
-        if(result[s].volume != ''){
-            volume[s] = result[s].volume;
-            dates[s] = String(result[s].date);
-        }
-    }
+   
 
-    //MACD
-    var c = 0;
-    var macd_ema_fast = [];
-    var macd_ema_slow = [];
-    var macd_sma = [];
-    var macd_history = [];
-    var insertingData_MD = new Array(20);
-    var insertingData_MD_history = new Array(20);
-    const MACD_DATE_SPAN_FAST = 5;
-    const MACD_DATE_SPAN_SLOW = 20;
-    const SIGNAL_SPAN = 9;
-    var alpha_fast = 2 / (MACD_DATE_SPAN_FAST + 1);
-    var alpha_slow = 2 / (MACD_DATE_SPAN_SLOW + 1);
-
-    for(var m = result.length - 50; m < result.length - 30; m++){
-        var macd_val_ema = 0;
-        if(c >= 0){
-            for(var n = 0; n < MACD_DATE_SPAN_FAST; n++){
-                if(result[m + n].close != ''){
-                    macd_val_ema += result[m + n].close;
-                }
-            }
-            macd_val_ema += result[m + MACD_DATE_SPAN_FAST -1].close;
-            macd_ema_fast[c] = macd_val_ema / (MACD_DATE_SPAN_FAST + 1);
-        }else{
-            macd_ema_fast[c - 1] + alpha_fast * (result[m + n].close - macd_ema[c - 1]);
-        }
-
-        macd_val_ema = 0;
-        if(c >= 0){
-            for(var n = 0; n < MACD_DATE_SPAN_SLOW; n++){
-                if(result[m + n].close != ''){
-                    macd_val_ema += result[m + n].close;
-                }
-            }
-            macd_val_ema += result[m + MACD_DATE_SPAN_SLOW -1].close;
-            macd_ema_slow[c] = macd_val_ema / (MACD_DATE_SPAN_SLOW + 1);
-        }else{
-            macd_ema_slow[c - 1] + alpha_slow * (result[m + n].close - macd_ema[c - 1]);
-        }
-
-        var sma_sum = 0;
-        for(var n = 0; n < SIGNAL_SPAN; n++){
-            if(result[m + n].close != ''){
-                sma_sum += result[m + n].close;
-            }
-        }
-        macd_sma[c] = sma_sum / SIGNAL_SPAN;
-        macd_history[c] =  (macd_ema_fast[c] - macd_ema_slow[c]);
-        c++;
-    }
-    
-
-    //RSI
-    const RSI_SPAN = 15;
-    c = 0;
-    var rsi = [];
-    var insertingData_RSI = new Array(21);
-    insertingData_RSI[0] =  ['', 'RSI']; 
-    // var highest = 0;
-    // var lowest = 100000;
-    // var close_sum = 0;
-    for(var i = result.length - RSI_SPAN - 20; i < result.length - RSI_SPAN; i++){
-        var agari = 0;
-        var sagari = 0;
-        // close_sum += result[i + RSI_SPAN - 1].close;
-        for(var j = 0; j < RSI_SPAN; j++){
-            // if(result[m + n].close > highest){
-            //     highest = result[m + n].close; 
-            // }else if(result[m + n].close < lowest){
-            //     lowest = result[m + n].close;
-            // }
-            var diff = result[i + j].close - result[i + j].open;
-            if(diff > 0){
-                agari += diff; 
-            }else{
-                sagari += Math.abs(diff);
-            }
-        }
-        var agari_ave = agari / RSI_SPAN;
-        var sagari_ave = sagari / RSI_SPAN;
-        rsi[c] = agari_ave / (agari_ave + sagari_ave) * 100;
-        c++;
-    }
-
-
-    //配列insertingDataの中に、[安値、始値、高値、終値、５日移動平均線、２５日移動平均線、５０日移動平均線、１００日移動平均線、２００日移動平均線]の形で値を入れ込む
     for(var a = 0; a < 30; a++){
-        insertingData[a] = [
-            dates[a + length - 30],
-            parseFloat(result[a + length - 30].low),
-            parseFloat(result[a + length - 30].open),
-            parseFloat(result[a + length - 30].close),
-            parseFloat(result[a + length - 30].high),
-            ave[0][a],
-            ave[1][a],
-            ave[2][a],
-            ave[3][a],
-            ave[4][a]
-        ];
-
         insertingData_BB[a] = [
             dates[a + length - 30],
             parseFloat(result[a + length - 30].low),
@@ -466,47 +456,8 @@ function aveData_onajax_success(result,textStatus){
         // console.log(ave[0][a],ave[1][a],ave[2][a]);
     }
 
-    for(var b = 0; b < 20; b++){
-        insertingData_MD[b] = [
-            dates[b + length - 30],
-            parseFloat(result[b + length - 30].low),
-            parseFloat(result[b + length - 30].open),
-            parseFloat(result[b + length - 30].close),
-            parseFloat(result[b + length - 30].high),
-            macd_ema_fast[b],
-            macd_ema_slow[b],
-        ];
-    }
-
-    for(var b = 0; b < 20; b++){
-        insertingData_MD_history[b] = [
-            dates[b + length - 30],
-            // parseFloat(result[b + length - 30].low),
-            // parseFloat(result[b + length - 30].open),
-            // parseFloat(result[b + length - 30].close),
-            // parseFloat(result[b + length - 30].high),
-            macd_history[b]
-        ];
-    }
-
-    for(var b = 0; b < 20; b++){
-        insertingData_RSI[b + 1] = [
-            dates[b + length - 30],
-            // parseFloat(result[b + length - 30].low),
-            // parseFloat(result[b + length - 30].open),
-            // parseFloat(result[b + length - 30].close),
-            // parseFloat(result[b + length - 30].high),
-            rsi[b]
-        ];
-    }
-    //チャート描画用の配列の中に、insertingDataの値を入れ込む
-    //最古の50日分のデータまでは移動平均線のデータが揃っていないので、取り除く
-    for (var i = 0; i < insertingData.length; i++){
-        chartData.addRow(insertingData[i]);
-    }
-
-    //ボリンジャーバンド用値と日付のためのカラムを作成
-    var chartData_BB = new google.visualization.DataTable();
+     //ボリンジャーバンド用値と日付のためのカラムを作成
+     var chartData_BB = new google.visualization.DataTable();
     chartData_BB.addColumn('string');
     for(var i = 0; i < 9; i++){
         chartData_BB.addColumn('number');
@@ -515,103 +466,8 @@ function aveData_onajax_success(result,textStatus){
     for (var i = 0; i < insertingData_BB.length; i++){
         chartData_BB.addRow(insertingData_BB[i]);
     }
-    //MACD用値と日付のためのカラムを作成
-    var chartData_MD = new google.visualization.DataTable();
-    chartData_MD.addColumn('string');
-    for(var i = 0; i < 6; i++){
-        chartData_MD.addColumn('number');
-    }
-    
-    for (var i = 0; i < insertingData_MD.length; i++){
-        chartData_MD.addRow(insertingData_MD[i]);
-    }
 
-    //MACD用値と日付のためのカラムを作成ヒストグラム
-    var chartData_MD_history = new google.visualization.DataTable();
-    chartData_MD_history.addColumn('string');
-    for(var i = 0; i < 1; i++){
-        chartData_MD_history.addColumn('number');
-    }
-    
-    for (var i = 0; i < insertingData_MD_history.length; i++){
-        chartData_MD_history.addRow(insertingData_MD_history[i]);
-    }
-
-    //RSI用値と日付のためのカラムを作成
-    var chartData_RSI = new google.visualization.DataTable();
-    chartData_RSI.addColumn('string');
-    for(var i = 0; i < 1; i++){
-        chartData_RSI.addColumn('number');
-    }
-
-    //描画の処理RSI
-    google.charts.load('current', {packages: ['corechart']});
-    google.charts.setOnLoadCallback(drawChart);
-    function drawChart() {
-        var data = google.visualization.arrayToDataTable( 
-        //グラフデータの指定
-        // [''],
-            insertingData_RSI
-        );
-
-        var options_RSI = { 
-            //オプションの指定
-            title: '折れ線グラフサンプル'
-        };
-
-        var chart_RSI = new google.visualization.LineChart(document.getElementById('appendMain_RSI'));
-        chart_RSI.draw(data, options_RSI);
-    }
-    
-    //チャートの見た目に関する記述、詳細は公式ドキュメントをご覧になってください
-    var options = {
-        chartArea:{left:80,top:10,right:80,bottom:10},
-        colors: ['#003A76'],
-        legend: {
-            position: 'none',
-        },
-        vAxis:{
-            viewWindowMode:'maximized'
-        },
-        hAxis: {
-            format: 'yy/MM/dd',
-            direction: -1,
-        },
-        bar: { 
-            groupWidth: '100%' 
-        },
-        width: 1000,
-        height: 500,
-        lineWidth: 2,
-        curveType: 'function',
-        //チャートのタイプとして、ローソク足を指定
-        seriesType: "candlesticks",  
-        //ローソク足だでなく、線グラフも三種類表示することを記述
-        series: {
-            1:{
-                type: "line",
-                color: 'green',
-            },
-            2:{
-                type: "line",
-                color: 'red',                
-            },
-            3:{
-                type: "line",
-                color: 'orange',                
-            },
-            4:{
-                type: "line",
-                color: 'blue',                
-            },
-            5:{
-                type: "line",
-                color: 'navy',                
-            }
-        } 
-    };
-
-    //チャートの見た目に関する記述、詳細は公式ドキュメントをご覧になってください
+    //チャートの見た目に関する記述、詳細は公式ドキュメントを参照
     var options_BB = {
         chartArea:{left:80,top:10,right:80,bottom:10},
         colors: ['#003A76'],
@@ -679,7 +535,116 @@ function aveData_onajax_success(result,textStatus){
         } 
     };
 
-    //チャートの見た目に関する記述、詳細は公式ドキュメントをご覧になってください
+    //描画の処理(ボリンジャーバンド)
+    var chart_BB = new google.visualization.ComboChart(document.getElementById('appendMain_BB'));
+    chart_BB.draw(chartData_BB, options_BB);
+}
+
+/**
+ * 株価MACDデータ生成と描画
+ */
+function kabu_macd_data(result,dates){
+    //MACD
+    var c = 0;
+    var macd_ema_fast = [];
+    var macd_ema_slow = [];
+    var macd_sma = [];
+    var macd_history = [];
+    var divide = 0;
+    var length = result.length;
+    var insertingData_MD = new Array(20);
+    var insertingData_MD_history = new Array(20);
+    const MACD_DATE_SPAN_FAST = 5;
+    const MACD_DATE_SPAN_SLOW = 20;
+    const SIGNAL_SPAN = 9;
+    var alpha_fast = 2 / (MACD_DATE_SPAN_FAST + 1);
+    var alpha_slow = 2 / (MACD_DATE_SPAN_SLOW + 1);
+
+    for(var m = result.length - 50; m < result.length - 30; m++){
+        var macd_val_ema = 0;
+        if(c >= 0){
+            for(var n = 0; n < MACD_DATE_SPAN_FAST; n++){
+                if(result[m + n].close != ''){
+                    macd_val_ema += result[m + n].close;
+                }
+            }
+            macd_val_ema += result[m + MACD_DATE_SPAN_FAST -1].close;
+            macd_ema_fast[c] = macd_val_ema / (MACD_DATE_SPAN_FAST + 1);
+        }else{
+            macd_ema_fast[c - 1] + alpha_fast * (result[m + n].close - macd_ema[c - 1]);
+        }
+
+        macd_val_ema = 0;
+        if(c >= 0){
+            for(var n = 0; n < MACD_DATE_SPAN_SLOW; n++){
+                if(result[m + n].close != ''){
+                    macd_val_ema += result[m + n].close;
+                }
+            }
+            macd_val_ema += result[m + MACD_DATE_SPAN_SLOW -1].close;
+            macd_ema_slow[c] = macd_val_ema / (MACD_DATE_SPAN_SLOW + 1);
+        }else{
+            macd_ema_slow[c - 1] + alpha_slow * (result[m + n].close - macd_ema[c - 1]);
+        }
+
+        var sma_sum = 0;
+        for(var n = 0; n < SIGNAL_SPAN; n++){
+            if(result[m + n].close != ''){
+                sma_sum += result[m + n].close;
+            }
+        }
+        macd_sma[c] = sma_sum / SIGNAL_SPAN;
+        macd_history[c] =  (macd_ema_fast[c] - macd_ema_slow[c]);
+        c++;
+    }
+
+    for(var b = 0; b < 20; b++){
+        insertingData_MD[b] = [
+            dates[b + length - 30],
+            parseFloat(result[b + length - 30].low),
+            parseFloat(result[b + length - 30].open),
+            parseFloat(result[b + length - 30].close),
+            parseFloat(result[b + length - 30].high),
+            macd_ema_fast[b],
+            macd_ema_slow[b],
+        ];
+    }
+
+    for(var b = 0; b < 20; b++){
+        insertingData_MD_history[b] = [
+            dates[b + length - 30],
+            // parseFloat(result[b + length - 30].low),
+            // parseFloat(result[b + length - 30].open),
+            // parseFloat(result[b + length - 30].close),
+            // parseFloat(result[b + length - 30].high),
+            macd_history[b]
+        ];
+    }
+
+    //MACD用値と日付のためのカラムを作成
+    var chartData_MD = new google.visualization.DataTable();
+    chartData_MD.addColumn('string');
+    for(var i = 0; i < 6; i++){
+        chartData_MD.addColumn('number');
+    }
+    
+    for (var i = 0; i < insertingData_MD.length; i++){
+        chartData_MD.addRow(insertingData_MD[i]);
+    }
+
+    //MACD用値と日付のためのカラムを作成ヒストグラム
+    var chartData_MD_history = new google.visualization.DataTable();
+    chartData_MD_history.addColumn('string');
+    for(var i = 0; i < 1; i++){
+        chartData_MD_history.addColumn('number');
+    }
+    
+    for (var i = 0; i < insertingData_MD_history.length; i++){
+        chartData_MD_history.addRow(insertingData_MD_history[i]);
+    }
+
+
+    //チャートの見た目に関する記述、詳細は公式ドキュメントを参照
     var options_MD = {
         chartArea:{left:80,top:10,right:80,bottom:10},
         colors: ['#003A76'],
@@ -746,7 +711,7 @@ function aveData_onajax_success(result,textStatus){
             // }
         } 
     };
-    //チャートの見た目に関する記述、詳細は公式ドキュメントをご覧になってください
+    //チャートの見た目に関する記述、詳細は公式ドキュメントを参照
     var options_MD_history = {
         chartArea:{left:80,top:10,right:80,bottom:10},
         colors: ['#003A76'],
@@ -813,7 +778,74 @@ function aveData_onajax_success(result,textStatus){
             // }
         } 
     };
-    //チャートの見た目に関する記述、詳細は公式ドキュメントをご覧になってください
+
+     //描画の処理(MACD)
+     var chart_MD = new google.visualization.ComboChart(document.getElementById('appendMain_MD'));
+    chart_MD.draw(chartData_MD, options_MD);
+
+    //描画の処理(MACD)ヒストグラム
+     var chart_MD_history = new google.visualization.Histogram(document.getElementById('appendMain_MD_history'));
+    chart_MD_history.draw(chartData_MD_history, options_MD_history);
+}
+
+/**
+ * 株価RSIのデータ生成と描画
+ */
+function kabu_rsi_data(result,dates){
+    //RSI
+    const RSI_SPAN = 15;
+    c = 0;
+    var rsi = [];
+    var divide = 0;
+    var length = result.length;
+    var insertingData_RSI = new Array(21);
+    insertingData_RSI[0] =  ['', 'RSI']; 
+    // var highest = 0;
+    // var lowest = 100000;
+    // var close_sum = 0;
+    for(var i = result.length - RSI_SPAN - 20; i < result.length - RSI_SPAN; i++){
+        var agari = 0;
+        var sagari = 0;
+        // close_sum += result[i + RSI_SPAN - 1].close;
+        for(var j = 0; j < RSI_SPAN; j++){
+            // if(result[m + n].close > highest){
+            //     highest = result[m + n].close; 
+            // }else if(result[m + n].close < lowest){
+            //     lowest = result[m + n].close;
+            // }
+            var diff = result[i + j].close - result[i + j].open;
+            if(diff > 0){
+                agari += diff; 
+            }else{
+                sagari += Math.abs(diff);
+            }
+        }
+        var agari_ave = agari / RSI_SPAN;
+        var sagari_ave = sagari / RSI_SPAN;
+        rsi[c] = agari_ave / (agari_ave + sagari_ave) * 100;
+        c++;
+    }
+
+    for(var b = 0; b < 20; b++){
+        insertingData_RSI[b + 1] = [
+            dates[b + length - 30],
+            // parseFloat(result[b + length - 30].low),
+            // parseFloat(result[b + length - 30].open),
+            // parseFloat(result[b + length - 30].close),
+            // parseFloat(result[b + length - 30].high),
+            rsi[b]
+        ];
+    }
+   
+
+    //RSI用値と日付のためのカラムを作成
+    var chartData_RSI = new google.visualization.DataTable();
+    chartData_RSI.addColumn('string');
+    for(var i = 0; i < 1; i++){
+        chartData_RSI.addColumn('number');
+    }
+
+    //チャートの見た目に関する記述、詳細は公式ドキュメントを参照
     var options_RSI = {
         chartArea:{left:80,top:10,right:80,bottom:10},
         colors: ['#003A76'],
@@ -881,27 +913,52 @@ function aveData_onajax_success(result,textStatus){
         } 
     };
 
-    //描画の処理
-    var chart = new google.visualization.ComboChart(document.getElementById('appendMain'));
-    chart.draw(chartData, options);
+    //描画の処理RSI
+    google.charts.load('current', {packages: ['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable( 
+        //グラフデータの指定
+        // [''],
+            insertingData_RSI
+        );
 
-    //描画の処理(ボリンジャーバンド)
-    var chart_BB = new google.visualization.ComboChart(document.getElementById('appendMain_BB'));
-    chart_BB.draw(chartData_BB, options_BB);
+        var options_RSI = { 
+            //オプションの指定
+            title: '折れ線グラフサンプル'
+        };
 
-    //描画の処理(MACD)
-    var chart_MD = new google.visualization.ComboChart(document.getElementById('appendMain_MD'));
-    chart_MD.draw(chartData_MD, options_MD);
-
-    //描画の処理(MACD)ヒストグラム
-     var chart_MD_history = new google.visualization.Histogram(document.getElementById('appendMain_MD_history'));
-    chart_MD_history.draw(chartData_MD_history, options_MD_history);
-
-    //出来高棒グラフを作成する関数を呼び出し
-    volumeChart(volume, dates, length);
+        var chart_RSI = new google.visualization.LineChart(document.getElementById('appendMain_RSI'));
+        chart_RSI.draw(data, options_RSI);
+    }
+    
 }
 
-function aveData(){
+function draw_kabu_technical_index_charts(result,textStatus){
+    var volume = new Array();
+    //チャートの日付を保持する配列
+    var dates = new Array();
+    var length = result.length;
+    for(var s = 0; s < length; s++){
+        if(result[s].volume != ''){
+            volume[s] = result[s].volume;
+            dates[s] = String(result[s].date);
+        }
+    }
+
+    kabu_idou_ave_data(result,dates);
+    kabu_bollinger_band_data(result,dates);
+    kabu_macd_data(result,dates);
+    kabu_rsi_data(result,dates);
+
+    //出来高棒グラフを作成する関数を呼び出し
+    kabu_volume_chart(volume, dates, length);
+}
+
+/**
+ * 株価情報取得
+ */
+function kabu_stock(){
     var symbol = '{{ $meigara -> symbol }}';
     var hostname =  "{{ request()->getUriForPath('') }}";
     var url = hostname + "/api/Meigara/aveData?symbol=" + symbol;
@@ -911,7 +968,7 @@ function aveData(){
         dataType: "json",
         cache: false,
         success: function(data, textStatus){
-            aveData_onajax_success(data,textStatus);
+            draw_kabu_technical_index_charts(data,textStatus);
             // 成功したとき
             // console.log(data);
         
@@ -923,7 +980,11 @@ function aveData(){
     });
 }
 
-function volumeChart(volume, dates, length){
+
+/**
+ * 株価1日レンジデータ生成と描画
+ */
+function kabu_volume_chart(volume, dates, length){
         var chartData = new google.visualization.DataTable();
         //出来高の値と日付のためのカラムを作成
         chartData.addColumn('string');
@@ -957,6 +1018,9 @@ function volumeChart(volume, dates, length){
         chart.draw(chartData, options);
 }
 
+/**
+ * FX　USDJPYのレートを取得
+ */
 function fx_rate(){
     var hostname = "{{ request()->getUriForPath('') }}";
     var symbol = "USDJPY";
@@ -983,7 +1047,10 @@ function fx_rate(){
     });
 }
 
-function BarChart(data,chartInterval){    
+/**
+ * 銘柄の一日レンジ幅
+ */
+function draw_bar_chart(data,chartInterval){    
     // console.log(data);
     var takane = 0;
     for(var i = 0; i < data.length; i++){
@@ -1060,7 +1127,10 @@ function BarChart(data,chartInterval){
     );
 }
 
-function kainekeisan(kabuka_rate_data,fx_rate){
+/**
+ * 株の購入金額計算および表示
+ */
+function kaine_keisan(kabuka_rate_data,fx_rate){
     var kabuka_rate = kabuka_rate_data;
     var fx_rate = fx_rate;
     var user_ryou =  $('#user_ryou').val();
@@ -1074,7 +1144,10 @@ function kainekeisan(kabuka_rate_data,fx_rate){
     $("#goukei").text("合計金額は￥" + goukei + "円").css("font-size","1em");
 }
 
-function kainecheck(data){
+/**
+ * 市場時間有無およびFXレート表示
+ */
+function kaine_check(data){
     var user_ryou = 0;
     var hostname = "{{ request()->getUriForPath('') }}";
     var symbol = "USDJPY";
@@ -1105,7 +1178,7 @@ function kainecheck(data){
         $('#user_ryou').prop('disabled',false);
         $('#user_ryou_message').text("実際の購入金額計算できます。");
         $('#kingaku_keisan').on('click',function(){
-            kainekeisan(kabuka_rate_data,fx_rate);
+            kaine_keisan(kabuka_rate_data,fx_rate);
         })
     }
 }
@@ -1168,13 +1241,13 @@ function kainecheck(data){
     <div class="item" id="chart_div" style="width: 900px; height: 900px;"></div>
     <!-- ローソク足及び移動平均線グラフを配置 -->
     <div class="item" id='appendMain'></div>
-    <!-- ローソク足及び移動平均線グラフを配置 -->
+    <!-- ボリンジャーバンドグラフを配置 -->
     <div class="item" id='appendMain_BB'></div>
-    <!-- ローソク足及び移動平均線グラフを配置 -->
+    <!-- MACDグラフを配置 -->
     <div class="item" id='appendMain_MD'></div>
-    <!-- ローソク足及び移動平均線グラフを配置 -->
+    <!-- MACD棒グラフを配置 -->
     <div class="item" id='appendMain_MD_history'></div>
-    <!-- ローソク足及び移動平均線グラフを配置 -->
+    <!-- RSIグラフを配置 -->
     <div class="item" id='appendMain_RSI'></div>
     <!-- 出来高の棒グラフを配置 -->
     <div class="item" id='appendVolume'></div>
