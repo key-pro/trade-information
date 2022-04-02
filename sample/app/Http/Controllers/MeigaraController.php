@@ -16,6 +16,7 @@ class MeigaraController extends Controller
     public function index()
     {
         //
+        
         $data = Meigara::orderBy('created_at',"desc")->paginate(3);
         $text_meigara_name_part = request()->input("text_meigara_name_part");
         $data = Meigara::where("meigara_name","like","%{$text_meigara_name_part}%")->orderBy('created_at',"desc")->paginate(3);

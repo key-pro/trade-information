@@ -4,7 +4,7 @@
         <form action="{{route('Meigara.index')}}" method="get">
             <div class="search_bar">
                 <i class="fas fa-search search_icon"></i>
-                    <input type="text" name="text_meigara_name_part" id="text2" placeholder="企業名検索">
+                    <input type="text" name="text_meigara_name_part" id="text2" placeholder="企業名検索" required="required">
                 <button>検索</button>
             </div>
         </form>

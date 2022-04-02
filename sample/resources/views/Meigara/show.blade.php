@@ -31,12 +31,17 @@ function kabu_information(){
         success: function(data, textStatus){
         // 成功したとき
         // console.log(url);
-        if(data[0].bidPrice == "0"){
-            $('#bidPrice').text("取引時間外").css({"color":"red","font-weight":"bold"});
-            $('#bidSize').text("取引時間外").css({"color":"red","font-weight":"bold"});
-            $('#askPrice').text("取引時間外").css({"color":"red","font-weight":"bold"});
-            $('#askSize').text("取引時間外").css({"color":"red","font-weight":"bold"});
-            $('#kounyu_kabuka_rate').text("取引時間外").css({"color":"red","font-weight":"bold"});
+        if(data  ==  "" || data[0].bidPrice == "0"){
+            $('#bidPrice').text("取引時間外もしくは休場").css({"color":"red","font-weight":"bold"});
+            $('#bidSize').text("取引時間外もしくは休場").css({"color":"red","font-weight":"bold"});
+            $('#askPrice').text("取引時間外もしくは休場").css({"color":"red","font-weight":"bold"});
+            $('#askSize').text("取引時間外もしくは休場").css({"color":"red","font-weight":"bold"});
+            $('#lastUpdated').text("取引時間外もしくは休場").css({"color":"red","font-weight":"bold"});
+            $('#lastSalePrice').text("取引時間外もしくは休場").css({"color":"red","font-weight":"bold"});
+            $('#lastSaleSize').text("取引時間外もしくは休場").css({"color":"red","font-weight":"bold"});
+            $('#lastSaleTime').text("取引時間外もしくは休場").css({"color":"red","font-weight":"bold"});
+            $('#volume').text("取引時間外もしくは休場").css({"color":"red","font-weight":"bold"});
+            $('#kounyu_kabuka_rate').text("取引時間外もしくは休場").css({"color":"red","font-weight":"bold"});
             //リアルタイム購入入力チェック用為替レート
             fx_rate();
         }else{
@@ -45,19 +50,21 @@ function kabu_information(){
             $('#askPrice').text(data[0].askPrice);
             $('#askSize').text(data[0].askSize);
             $('#kounyu_kabuka_rate').text(data[0].bidPrice);
-             //リアルタイム購入入力チェック用為替レート
+            $('#lastUpdated').text((new Date(data[0].lastUpdated)).toString());
+            $('#lastSalePrice').text(data[0].lastSalePrice);
+            $('#lastSaleSize').text(data[0].lastSaleSize);
+            // if(data[0].lastSaleTime != 0){
+            $('#lastSaleTime').text((new Date(data[0].lastSaleTime)).toString());
+            // }else{
+            $('#lastSaleTime').text((new Date(data[0].lastUpdated)).toString());
+            // }
+            $('#volume').text(data[0].volume);
+            //リアルタイム購入入力チェック用為替レート
             fx_rate();
             kaine_check(data);
         }
-        $('#lastUpdated').text((new Date(data[0].lastUpdated)).toString());
-        $('#lastSalePrice').text(data[0].lastSalePrice);
-        $('#lastSaleSize').text(data[0].lastSaleSize);
-        if(data[0].lastSaleTime != 0){
-            $('#lastSaleTime').text((new Date(data[0].lastSaleTime)).toString());
-        }else{
-            $('#lastSaleTime').text((new Date(data[0].lastUpdated)).toString());
-        }
-        $('#volume').text(data[0].volume);
+       
+        
 
         // data にサーバーから返された html が入る
         },
@@ -124,7 +131,7 @@ function kabu_chart_rousoku_and_kabu_range_value(date,chartInterval){
     , true);
 
     var options = {
-    legend: 'none',
+        legend: 'none',
         bar: { groupWidth: '100%' }, // Remove space between bars.
         candlestick: {
         fallingColor: { strokeWidth: 0, fill: 'red' }, // red
@@ -779,12 +786,12 @@ function kabu_macd_data(result,dates){
         } 
     };
 
-     //描画の処理(MACD)
-     var chart_MD = new google.visualization.ComboChart(document.getElementById('appendMain_MD'));
+    //描画の処理(MACD)
+    var chart_MD = new google.visualization.ComboChart(document.getElementById('appendMain_MD'));
     chart_MD.draw(chartData_MD, options_MD);
 
     //描画の処理(MACD)ヒストグラム
-     var chart_MD_history = new google.visualization.Histogram(document.getElementById('appendMain_MD_history'));
+    var chart_MD_history = new google.visualization.Histogram(document.getElementById('appendMain_MD_history'));
     chart_MD_history.draw(chartData_MD_history, options_MD_history);
 }
 
@@ -1019,7 +1026,7 @@ function kabu_volume_chart(volume, dates, length){
 }
 
 /**
- * FX　USDJPYのレートを取得
+ * FX USDJPYのレートを取得
  */
 function fx_rate(){
     var hostname = "{{ request()->getUriForPath('') }}";
@@ -1259,7 +1266,7 @@ function kaine_check(data){
 <p id="kounyu_kabuka_rate"></p>
 <p>USDレート</p>
 <p id="fx_rate"></p>
-購入量<input type="number" id="user_ryou" disabled><sub id="user_ryou_message">取引時間外ため使用できません。</sub>
+購入量<input type="number" id="user_ryou" disabled><sub id="user_ryou_message">取引時間外もしくは休場ため使用できません。</sub>
 <input type="button" id="kingaku_keisan" value="計算">
 <p id="goukei"></p>
 <a class="btn-outline-primary btn" href="{{route('Meigara.index',[''])}}"><i class="fas fa-cog"></i>一覧戻る</a>
