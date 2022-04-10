@@ -26,11 +26,26 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
         Gate::define('MeigaraCategory_create',function(User $user){
-            return $user -> id === 1 ? true : false;
+            return $user -> role === User::ROLE_ADMIN ? true : false;
         });
+        Gate::define('MeigaraCategory_edit',function(User $user){
+            return $user -> role === User::ROLE_ADMIN ? true : false;
+        });
+        Gate::define('MeigaraCategory_delete',function(User $user){
+            return $user -> role === User::ROLE_ADMIN ? true : false;
+        });
+
         //
         Gate::define('Meigara_create',function(User $user){
-            return $user -> id === 1 ? true : false;
+            return $user -> id === User::ROLE_ADMIN ? true : false;
+        });
+
+        Gate::define('Meigara_edit',function(User $user){
+            return $user -> id === User::ROLE_ADMIN ? true : false;
+        });
+
+        Gate::define('Meigara_delete',function(User $user){
+            return $user -> id === User::ROLE_ADMIN ? true : false;
         });
     }
 }

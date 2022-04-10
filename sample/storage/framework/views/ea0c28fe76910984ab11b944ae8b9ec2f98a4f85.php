@@ -24,7 +24,7 @@
         ["GBPNOK","GBPNZD","GBPSEK"],
         ["GBPUSD","JPYCAD","JPYCHF"],
         ["NZDUSD","USDCAD","USDCHF"],
-        ["USDCNH","USDCZK","USDJPY",],
+        ["USDCNH","USDCZK","USDJPY"],
         ["USDDKK","USDHKD","USDHUF"],
         ["USDILS","USDINR","USDSGD"],
         ["USDMXN","USDNOK","USDSEK"],
@@ -36,7 +36,7 @@
 
     function table_init(){
         var row_src = '<tr>' +
-        '<td id="XXXYYY_country"></td>' +
+        '<td class="flags" id="XXXYYY_country"><img src="XXX"><img src="YYY"></td>' +
         '<td id="XXXYYY_currency_pairs"></td>' +
         '<td id="XXXYYY_before_value"></td>' +
         '<td id="XXXYYY_after_value"></td>' +
@@ -49,6 +49,12 @@
             for(j = 0; j < currency_pairs[i].length; j++){
                 var pair = currency_pairs[i][j];
                 var row = row_src.replaceAll("XXXYYY",pair);
+                var flag1 = pair.substr(0,3);
+                var flag2 = pair.substr(3,3);
+                //<link rel="stylesheet" href="<?php echo e(asset('assets/css/my.css')); ?>">
+                // row = row.replaceAll("XXX","<?php echo e(asset('assets/img/National_flags')); ?>/"+flag1+".png");
+                // row = row.replaceAll("YYY","<?php echo e(asset('assets/img/National_flags')); ?>/"+flag2+".png");
+
                 $("#fx_rate_table").append(row);
             }
         }
@@ -80,7 +86,20 @@
                     if(currency != "USDCAD" && currency != "USDJPY"){
                         // console.log(currency);
                     }
-                    $('#'+ currency + "_country").text(data[i].symbol);
+                   
+                    /*
+                    var row = row_src.replaceAll("XXXYYY",pair);
+                    var flag1 = pair.substr(0,3);
+                    var flag2 = pair.substr(3,3);
+                    //<link rel="stylesheet" href="<?php echo e(asset('assets/css/my.css')); ?>">
+                    row = row.replaceAll("XXX","<?php echo e(asset('assets/img/National_flags')); ?>/"+flag1+".png");
+                    row = row.replaceAll("YYY","<?php echo e(asset('assets/img/National_flags')); ?>/"+flag2+".png");
+                    */
+                    var flag1 = currency.substr(0,3);
+                    var flag2 = currency.substr(3,3);
+                    var img1 = "<img src='<?php echo e(asset('assets/img/National_flags')); ?>/"+flag1+".png'>";
+                    var img2 = "<img src='<?php echo e(asset('assets/img/National_flags')); ?>/"+flag2+".png'>";
+                    $('#'+ currency + "_country").html(img1+img2);
                     $('#'+ currency + "_currency_pairs").text(data[i].symbol);
                     $('#'+ currency + "_before_value").text($('#'+ currency + "_after_value").text());
                     $('#'+ currency + "_after_value").text(my_round(data[i].rate,5));

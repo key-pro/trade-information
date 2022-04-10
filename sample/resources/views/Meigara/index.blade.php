@@ -10,6 +10,7 @@
         </form>
         @foreach($meigaras as $meigara)
         <div class="meigara-entry">
+            
             {{$meigara->id}}
             {{$meigara->meigara_name}}
             {{$meigara->created_at->format('Y/m/d H:i')}}

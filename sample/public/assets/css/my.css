@@ -168,6 +168,15 @@ table{
   width: 6em;
 }
 
+.fx_rate td.flags{
+  min-width:100px;
+}
+.fx_rate td.flags img{
+  max-width: 40px;
+  display: inline-block;
+  margin: 0 5px;
+}
+
 #form input .meigara_input{
   width: 1000px;
   height: 50px;
@@ -177,10 +186,11 @@ table{
 }
 
 .meigara-entry{
+  margin-top: 10px;
   width: 1000px;
   height: 50px;
   /* background-color: #0089BB; */
-  font-size: 25pt;
+  font-size: 15pt;
   text-align: center;
 }
 
@@ -244,4 +254,12 @@ input:checked + .tab_class {
  
 input:checked + .tab_class + .content_class {
   display: block;
+}
+
+.item{
+  
+}
+
+.boxContainer{
+  overflow: hidden;
 }

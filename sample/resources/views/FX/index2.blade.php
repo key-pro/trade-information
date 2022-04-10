@@ -14,17 +14,4 @@ curl_setopt_array($curl, [
 $response = curl_exec($curl);
 curl_close($curl);
 
-// echo $response;
-
-$value = substr($response,57,228);
-
-echo $value;
-echo PHP_EOL;
-$str_count = 1;
-$view = 2;
-for($i = 0; $i < 3; $i++){
-  echo substr($value,$str_count,3),PHP_EOL;
-  $str_count += 5;
-  echo substr($value,$str_count,7+$view),PHP_EOL;
-  $str_count += 9;
-}
+echo $response;
