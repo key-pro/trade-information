@@ -932,7 +932,13 @@ function kabu_rsi_data(result,dates){
 
         var options_RSI = { 
             //オプションの指定
+<<<<<<< HEAD
             title: 'RSI'
+=======
+            title: 'RSI',
+            width:500,
+            height: 500,
+>>>>>>> 64114af777b78b46a85867f0ec054179c9ae46d6
         };
 
         var chart_RSI = new google.visualization.LineChart(document.getElementById('appendMain_RSI'));
@@ -1245,7 +1251,7 @@ function kaine_check(data){
     <option value="240">4時間</option>
 </select>
 <div class="boxContainer">
-    <div class="item" id="chart_div" style="width: 900px; height: 900px;"></div>
+    <div class="item" id="chart_div" style="width: 1000px; height: 1000px;"></div>
     <!-- ローソク足及び移動平均線グラフを配置 -->
     <div class="item" id='appendMain'></div>
     <!-- ボリンジャーバンドグラフを配置 -->
