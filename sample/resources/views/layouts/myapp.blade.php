@@ -22,7 +22,7 @@
         tradeインフォメーション
         <nav>
             <ul>
-                <li><a href='/Meigara/9/show'>アメリカ株一覧</a></li>
+                <li><a href='/Meigara/5492/show'>アメリカ株一覧</a></li>
                 <li><a href='/Meigara'>銘柄カテゴリ</a></li>
                 <li><a href='/FX'>FX通貨一覧</a></li>
                 <li><a href='/Tradingrules'>市場取引ルール</a></li>

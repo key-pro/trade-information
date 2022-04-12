@@ -932,7 +932,7 @@ function kabu_rsi_data(result,dates){
 
         var options_RSI = { 
             //オプションの指定
-            title: '折れ線グラフサンプル'
+            title: 'RSI'
         };
 
         var chart_RSI = new google.visualization.LineChart(document.getElementById('appendMain_RSI'));
@@ -1121,12 +1121,12 @@ function draw_bar_chart(data,chartInterval){
         function() {
             var data = google.visualization.arrayToDataTable([
             ['', 'レンジ幅'],
-            ['1日レンジ幅',takane - ototoi_owarine]
+            ['レンジ',takane - ototoi_owarine]
             ]);
 
             var options = {
-                title: '会社業績',
-                vAxis: {title: '年度'}
+                title: 'レンジ幅',
+                vAxis: {title: '銘柄'}
             };
             var chart = new google.visualization.BarChart(document.getElementById('gct_sample_bar'));
             chart.draw(data, options);
