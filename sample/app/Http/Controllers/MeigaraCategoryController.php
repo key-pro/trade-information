@@ -15,6 +15,7 @@ class MeigaraCategoryController extends Controller
      */
     public function index()
     {
+        
         $text_category_name_part = request()->input("text_category_name_part");
         $data = MeigaraCategory::where("category_name","like","%{$text_category_name_part}%")->orderBy('created_at',"desc")->paginate(3);
         // $data = MeigaraCategory::all();
@@ -34,12 +35,8 @@ class MeigaraCategoryController extends Controller
 
     public function storeConfirm()
     {
-        $data = request()->validate([
-            'category_name' => 'required',
-        ],
-        [
-            'category_name.required' => '必須項目です。'
-        ]);
+        Gate::authorize("MeigaraCategory_create");
+       
         return view("MeigaraCategory.storeConfirm");
     }
 
@@ -52,8 +49,14 @@ class MeigaraCategoryController extends Controller
     public function store(Request $request)
     {
         //
-        $data = $request->all();
-        
+        Gate::authorize("MeigaraCategory_create");
+        // $data = $request->all();
+        $data = request()->validate([
+            'category_name' => 'required',
+        ],
+        [
+            'category_name.required' => '必須項目です。'
+        ]);
         MeigaraCategory::create($data);
         return redirect()->route("MeigaraCategory.index")->with("message","登録しました");
     }
@@ -78,6 +81,7 @@ class MeigaraCategoryController extends Controller
     public function edit(MeigaraCategory $meigaraCategory)
     {
         //
+        Gate::authorize("MeigaraCategory_edit");
         return view("MeigaraCategory.edit",['meigaraCategory' => $meigaraCategory]);
     }
 
@@ -91,7 +95,16 @@ class MeigaraCategoryController extends Controller
     public function update(Request $request, MeigaraCategory $meigaraCategory)
     {
         //
-        $data = $request -> all();
+
+        Gate::authorize("MeigaraCategory_edit");
+        // $data = $request -> all();
+        $data = request()->validate([
+            "category_name" => "required"
+        ],
+        [
+            'category_name.required' => '必須項目です。'
+        ]
+        );
         $meigaraCategory->fill($data)->save();
         return redirect()->route("MeigaraCategory.edit",["meigaraCategory" => $meigaraCategory])->with("message","変更完了しました。");
     }
@@ -106,12 +119,20 @@ class MeigaraCategoryController extends Controller
     public function delete(MeigaraCategory $meigaraCategory)
     {
         //
+        Gate::authorize("MeigaraCategory_delete");
         return view("MeigaraCategory.delete",["meigaraCategory" => $meigaraCategory]);
 
     } 
     public function destroy(MeigaraCategory $meigaraCategory)
     {
         //
+        $data = request()->validate([
+            'category_name' => 'required',
+        ],
+        [
+            'category_name.required' => '必須項目です。'
+        ]);
+        Gate::authorize("MeigaraCategory_delete");
         $meigaraCategory -> delete();
         return redirect()->route("MeigaraCategory.index")->with("message","削除完了しました。");
     }

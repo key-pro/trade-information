@@ -37,15 +37,15 @@ class AuthServiceProvider extends ServiceProvider
 
         //
         Gate::define('Meigara_create',function(User $user){
-            return $user -> id === User::ROLE_ADMIN ? true : false;
+            return $user -> role === User::ROLE_ADMIN ? true : false;
         });
 
         Gate::define('Meigara_edit',function(User $user){
-            return $user -> id === User::ROLE_ADMIN ? true : false;
+            return $user -> role === User::ROLE_ADMIN ? true : false;
         });
 
         Gate::define('Meigara_delete',function(User $user){
-            return $user -> id === User::ROLE_ADMIN ? true : false;
+            return $user -> role === User::ROLE_ADMIN ? true : false;
         });
     }
 }

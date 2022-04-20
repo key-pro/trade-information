@@ -32,16 +32,16 @@ function kabu_information(){
         // 成功したとき
         // console.log(url);
         if(data  ==  "" || data[0].bidPrice == "0"){
-            $('#bidPrice').text("取引時間外もしくは休場").css({"color":"red","font-weight":"bold"});
-            $('#bidSize').text("取引時間外もしくは休場").css({"color":"red","font-weight":"bold"});
-            $('#askPrice').text("取引時間外もしくは休場").css({"color":"red","font-weight":"bold"});
-            $('#askSize').text("取引時間外もしくは休場").css({"color":"red","font-weight":"bold"});
-            $('#lastUpdated').text("取引時間外もしくは休場").css({"color":"red","font-weight":"bold"});
-            $('#lastSalePrice').text("取引時間外もしくは休場").css({"color":"red","font-weight":"bold"});
-            $('#lastSaleSize').text("取引時間外もしくは休場").css({"color":"red","font-weight":"bold"});
-            $('#lastSaleTime').text("取引時間外もしくは休場").css({"color":"red","font-weight":"bold"});
-            $('#volume').text("取引時間外もしくは休場").css({"color":"red","font-weight":"bold"});
-            $('#kounyu_kabuka_rate').text("取引時間外もしくは休場").css({"color":"red","font-weight":"bold"});
+            $('#bidPrice').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
+            $('#bidSize').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
+            $('#askPrice').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
+            $('#askSize').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
+            $('#lastUpdated').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
+            $('#lastSalePrice').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
+            $('#lastSaleSize').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
+            $('#lastSaleTime').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
+            $('#volume').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
+            $('#kounyu_kabuka_rate').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
             //リアルタイム購入入力チェック用為替レート
             fx_rate();
         }else{
@@ -932,13 +932,7 @@ function kabu_rsi_data(result,dates){
 
         var options_RSI = { 
             //オプションの指定
-<<<<<<< HEAD
             title: 'RSI'
-=======
-            title: 'RSI',
-            width:500,
-            height: 500,
->>>>>>> 64114af777b78b46a85867f0ec054179c9ae46d6
         };
 
         var chart_RSI = new google.visualization.LineChart(document.getElementById('appendMain_RSI'));
@@ -1237,7 +1231,7 @@ function kaine_check(data){
             <td id="volume"></td>
         </tr>
     </table>
-<input type="date" id="chart_date" onchange="drawChart()" value="{{ date('Y-m-d',time()-86400) }}">
+<input type="date" id="chart_date" min=1 max=6 onchange="drawChart()" value="{{ date('Y-m-d',time()-86400) }}">
 <select name="chart_Interval" id="chart_Interval" onchange="drawChart()">
     <option value="1">1</option>
     <option value="3">3</option>
@@ -1272,8 +1266,33 @@ function kaine_check(data){
 <p id="kounyu_kabuka_rate"></p>
 <p>USDレート</p>
 <p id="fx_rate"></p>
-購入量<input type="number" id="user_ryou" disabled><sub id="user_ryou_message">取引時間外もしくは休場ため使用できません。</sub>
+購入量<input type="number" id="user_ryou" disabled><sub id="user_ryou_message">ただいま取引時間外です。</sub>
 <input type="button" id="kingaku_keisan" value="計算">
 <p id="goukei"></p>
 <a class="btn-outline-primary btn" href="{{route('Meigara.index',[''])}}"><i class="fas fa-cog"></i>一覧戻る</a>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+/**
+ * 日付チェック（土日休場）
+ */
+$(function(){
+	//入力したとき
+	$("#chart_date").on("change", function(){
+		//内容を取得
+		let val = $(this).val();
+		//整形
+		let date = new Date(val);
+		//曜日を取得 0=日 6=土
+		let week = date.getDay();
+		//土日または祝日のとき
+		if(week == 0 || week == 6){
+			//アラート
+			alert("その日は選択できません｡(土日は原則休場)");
+			//inputを空に
+			$(this).val("");
+		}
+	});
+});
+</script>
 @endsection

@@ -15,8 +15,10 @@
             {{$meigara->meigara_name}}
             {{$meigara->created_at->format('Y/m/d H:i')}}
             <a class="btn-outline-primary btn" href="{{route('Meigara.show',['meigara' => $meigara])}}"><i class="fas fa-cog"></i>詳細</a>
-            <a class="btn-outline-primary btn" href="{{route('Meigara.edit',['meigara' => $meigara])}}"><i class="fas fa-cog"></i>編集</a>
-            <a class="btn-outline-primary btn" href="{{route('Meigara.delete',['meigara' => $meigara])}}"><i class="fas fa-trash-alt"></i>削除</a>
+            @if(App\Models\User::isAdmin())
+                <a class="btn-outline-primary btn" href="{{route('Meigara.edit',['meigara' => $meigara])}}"><i class="fas fa-cog"></i>編集</a>
+                <a class="btn-outline-primary btn" href="{{route('Meigara.delete',['meigara' => $meigara])}}"><i class="fas fa-trash-alt"></i>削除</a>
+            @endif
         </div>
         @endforeach
         {{$meigaras->onEachSide(3)->links()}}

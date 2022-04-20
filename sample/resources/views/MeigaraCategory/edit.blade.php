@@ -6,6 +6,9 @@
             @method('PUT')
             <label>銘柄カテゴリ名
             <input type="text" name="category_name" value="{{$meigaraCategory->category_name}}"></label>
+            @if($errors -> has("category_name"))
+                {{ $errors-> first("category_name") }}<br>
+            @endif   
             <button class="btn btn-outline-primary"><i class="fas fa-check"></i>送信</button>
         </form>
 @endsection

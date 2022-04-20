@@ -37,6 +37,7 @@ class MeigaraController extends Controller
     }
 
     public function storeConfirm(){
+        Gate::authorize("Meigara_create");
         $data = request()->all();
         return view("Meigara.storeConfirm"); 
     }
@@ -50,7 +51,13 @@ class MeigaraController extends Controller
     public function store(Request $request)
     {
         //
-        $data = $request->all();
+        Gate::authorize("Meigara_create");
+        // $data = $request->all();
+        $data = $request->validate([
+            "meigara_name" => "required",
+            "symbol" => "required",
+            "currency" => "required|max:10",
+        ]);
         Meigara::create($data);
         return redirect()->route('Meigara.index')->with('message','銘柄登録しました。');
         $text_meigara_name_part = request()->input("text_meigara_name_part");
@@ -122,6 +129,7 @@ class MeigaraController extends Controller
     public function edit(Meigara $meigara)
     {
         //
+        Gate::authorize("Meigara_edit");
         return view("Meigara.edit",['meigara' => $meigara]);
     }
 
@@ -135,7 +143,15 @@ class MeigaraController extends Controller
     public function update(Request $request, Meigara $meigara)
     {
         //
-        $data = $request -> all();
+        Gate::authorize("Meigara_edit");
+        // $data = $request -> all();
+        $data = request()->validate([
+            "meigara_name" => "required"
+        ],
+        [
+            'meigara_name.required' => '必須項目です。'
+        ]
+        );
         $meigara->fill($data)->save();
         return redirect()->route("Meigara.edit",["meigara" => $meigara])->with("message","変更完了しました。");
     }
@@ -149,11 +165,13 @@ class MeigaraController extends Controller
 
     public function delete(Meigara $meigara)
     {
+        Gate::authorize("Meigara_delete");
         return view("Meigara.delete",["meigara" => $meigara]);
     }
     public function destroy(Meigara $meigara)
     {
         //
+        Gate::authorize("Meigara_delete");
         $meigara -> delete();
         return redirect()->route("Meigara.index")->with("message","削除完了しました。");
     }

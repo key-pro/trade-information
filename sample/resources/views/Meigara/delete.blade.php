@@ -5,8 +5,7 @@
         <form action="{{ route('Meigara.destroy',['meigara' => $meigara]) }}" method="POST">
             @csrf
             @method('DELETE')
-            <label>銘柄カテゴリ名
-            <input type="text" name="meigara_name" value="{{$meigara->meigara_name}}"></label>
+            銘柄: {{$meigara->meigara_name}}"
             <button class="btn btn-outline-primary"><i class="fas fa-exclamation-triangle"></i>送信</button>
         </form>
 @endsection

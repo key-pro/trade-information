@@ -9,6 +9,9 @@ var_dump($meigara);
         @method('PUT')
         <label>銘柄名
         <input type="text" name="meigara_name" value="{{ $meigara->meigara_name }}"></label>
+        @if($errors -> has("meigara_name"))
+            {{ $errors-> first("meigara_name") }}<br>
+        @endif
         <button class="btn btn-outline-primary"><i class="fas fa-check"></i>送信</button>
     </form>
 @endsection
