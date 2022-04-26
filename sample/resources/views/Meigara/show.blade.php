@@ -1190,6 +1190,7 @@ function kaine_check(data){
     }
 }
 
+
 </script>
 @endsection
 @section('content')
@@ -1245,21 +1246,22 @@ function kaine_check(data){
     <option value="240">4時間</option>
 </select>
 <div class="boxContainer">
-    <div class="item" id="chart_div" style="width: 1000px; height: 1000px;"></div>
+    <input type="button" id="graph_sw" value="グラフ戻す" style="display:none">
+    <div class="item graph" id="chart_div" style="width: 900px; height: 500px; display:block;"></div>
     <!-- ローソク足及び移動平均線グラフを配置 -->
-    <div class="item" id='appendMain'></div>
+    <div class="item graph" id='appendMain'></div>
     <!-- ボリンジャーバンドグラフを配置 -->
-    <div class="item" id='appendMain_BB'></div>
+    <div class="item graph" id='appendMain_BB'></div>
     <!-- MACDグラフを配置 -->
-    <div class="item" id='appendMain_MD'></div>
+    <div class="item graph" id='appendMain_MD'></div>
     <!-- MACD棒グラフを配置 -->
-    <div class="item" id='appendMain_MD_history'></div>
+    <div class="item graph" id='appendMain_MD_history'></div>
     <!-- RSIグラフを配置 -->
-    <div class="item" id='appendMain_RSI'></div>
+    <div class="item graph" id='appendMain_RSI'></div>
     <!-- 出来高の棒グラフを配置 -->
-    <div class="item" id='appendVolume'></div>
+    <div class="item graph" id='appendVolume'></div>
     <!-- 1日レンジを配置 -->
-    <div class="item" id='gct_sample_bar'></div>
+    <div class="item graph" id='gct_sample_bar'></div>
     
 </div>
 <p>実際購入金額</p>
@@ -1294,5 +1296,23 @@ $(function(){
 		}
 	});
 });
+
+$('.graph').on('click', function(){
+    // console.log($this);
+    for(i = 0; i < $('.graph').length; i++){
+        $('.graph').eq(i).css('display','none');
+    }
+    $(this).css('display','inline-block');
+    $(this).attr('style','width:1200px;height:600px;');
+    $('#graph_sw').css('display','block');
+})
+
+$('#graph_sw').on('click', function(){
+    // console.log($this);
+    for(i = 0; i < $('.graph').length; i++){
+        $('.graph').eq(i).css('display','inline-block');
+    }
+    $('#graph_sw').css('display','none');
+})
 </script>
 @endsection

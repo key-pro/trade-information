@@ -4,7 +4,7 @@
 <h2>FXリアルタイムレート</h2>
 <table class="fx_rate" id="fx_rate_table">
     <tr>
-        <th class="country">国旗</th>
+        {{-- <th class="country">国旗</th> --}}
         <th class="currency_pairs">通貨ペア</th>
         <th class="before_value">更新前</th>
         <th class="after_value">更新後</th>
@@ -41,8 +41,13 @@ function table_init(currency_pairs){
             //<link rel="stylesheet" href="{{asset('assets/css/my.css')}}">
             // row = row.replaceAll("XXX","{{asset('assets/img/National_flags')}}/"+flag1+".png");
             // row = row.replaceAll("YYY","{{asset('assets/img/National_flags')}}/"+flag2+".png");
-
-            $("#fx_rate_table").append(row);
+            switch(pair){
+                
+            case 'BTCJPY':
+                break;
+            default:
+                $("#fx_rate_table").append(row);
+            }
         // }
     }
     table_initialized = true;
@@ -70,9 +75,9 @@ function fx_rate(){
         success: function(data, textStatus){
             table_init(data["currency_pairs"]);
             // console.log(data);
-            for(i = 0 ; i <data.length; i++){
-                // console.log(data["rate"][i].symbol);
-                var currency = data["rate"][i].symbol;
+            for(i = 0 ; i <data.fx_rate.length; i++){
+                // console.log(data.fx_rate[i].symbol);
+                var currency = data.fx_rate[i].symbol;
                 // if(currency != "USDCAD" && currency != "USDJPY"){
                     // console.log(currency);
                 // }
@@ -89,9 +94,12 @@ function fx_rate(){
                 // var img1 = "<img src='{{asset('assets/img/National_flags')}}/"+flag1+".png'>";
                 // var img2 = "<img src='{{asset('assets/img/National_flags')}}/"+flag2+".png'>";
                 // $('#'+ currency + "_country").html(img1+img2);
-                $('#'+ currency + "_currency_pairs").text(data["rate"][i].symbol);
+
+                $('#'+ currency + "_currency_pairs").text(data.fx_rate[i].symbol);
                 $('#'+ currency + "_before_value").text($('#'+ currency + "_after_value").text());
-                $('#'+ currency + "_after_value").text(my_round(data["rate"][i].rate,5));
+                if(data.fx_rate[i].rate != 0){
+                    $('#'+ currency + "_after_value").text(my_round((1 / data.fx_rate[i].rate),3));
+                }
                 var value = $('#'+ currency + "_after_value").text() - $('#'+ currency + "_before_value").text();
                 var val2 = my_round(value,4);
                 $('#'+ currency + "_fluctuation").text(val2);
@@ -110,7 +118,7 @@ function fx_rate(){
                 //             console.log(currency);
                 // }
 
-                $('#'+ currency + "_timestamp").text((new Date(data["rate"][0].timestamp)).toString().substr(16,8));
+                $('#'+ currency + "_timestamp").text((new Date(data.fx_rate[0].timestamp)).toString().substr(16,8));
                 var before_value = $('#'+ currency + "_before_value").text();
                 if(before_value && before_value != "0"){
                     var ave = ($('#'+ currency + "_after_value").text() / $('#'+ currency + "_before_value").text());
@@ -149,7 +157,7 @@ function fx_rate(){
 function fx_rate_all(){
     // for(i= 0; i < currency_pairs.length; i++){
         fx_rate();
-        setTimeout(fx_rate_all,1000);
+        setTimeout(fx_rate_all,6000);
     // }
 }
 // table_init();

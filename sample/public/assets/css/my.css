@@ -68,28 +68,7 @@ nav ul li:hover{
     padding: 5px;
     width: 90%;
 }
-/* タブレット用 */
-@media screen and (min-width:768px){
-    body{
-        font-size: 12pt;
-    }
-    .meigara-category-entry{
-        margin: 10px;
-        width: 45%;
-        display: inline-block;
-    }
-}
-/* PC用 */
-@media screen and (min-width:990px){
-    body{
-        font-size: 10pt;
-    }
-    .meigara-category-entry{
-        margin: 10px;
-        width: 28%;
-        display: inline-block;
-    }
-}
+
 
 .fx_rate th,.fx_rate td{
     height: 1em;
@@ -269,6 +248,13 @@ input:checked + .tab_class + .content_class {
   overflow: hidden;
 }
 
+.boxContainer .graph{
+  display: inline-block;
+}
+.boxContainer .graph{
+  width: 480px;
+}
+
 /* ページTOPに戻る */
 .pagetop{
     display: none;
@@ -294,4 +280,60 @@ input:checked + .tab_class + .content_class {
 
 footer{
   text-align: center;
+}
+
+/* タブレット用 */
+@media screen and (min-width:768px){
+  body{
+      width: 768px;
+      font-size: 12pt;
+  }
+
+  .meigara-category-entry{
+      margin: 10px;
+      width: 45%;
+      display: inline-block;
+  }
+
+  .boxContainer .graph{
+    width: 360px;
+  }
+  
+}
+/* PC用 */
+@media screen and (min-width:1200px){
+  body{
+      width: 1200px;
+      font-size: 10pt;
+  }
+
+  .meigara-category-entry{
+      margin: 10px;
+      width: 28%;
+      display: inline-block;
+  }
+
+  .boxContainer .graph{
+    width: 280px;
+  }
+  
+}
+
+/* PC用 */
+@media screen and (min-width:2200px){
+  body{
+      width: 2200px;
+      font-size: 10pt;
+  }
+
+  .meigara-category-entry{
+      margin: 10px;
+      width: 28%;
+      display: inline-block;
+  }
+
+  .boxContainer .graph{
+    width: 500px;
+  }
+  
 }

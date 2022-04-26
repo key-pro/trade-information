@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Ramsey\Uuid\Codec\TimestampLastCombCodec;
 
 class FxController extends Controller
 {
@@ -40,7 +41,7 @@ class FxController extends Controller
 
 
         foreach ($json['rates'] as $currency => $rate) {
-            $fx_full_value[] = ["symbol" => $currency."JPY", "rate" => $rate, $json["updated"]];
+            $fx_full_value[] = ["symbol" => $currency."JPY", "rate" => $rate, "timestamp" => $json["updated"]];
             $currency_pairs[] = $currency."JPY";
         }
 
