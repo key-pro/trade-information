@@ -110,7 +110,7 @@ function fx_rate(){
                 //             console.log(currency);
                 // }
 
-                $('#'+ currency + "_timestamp").text((new Date(data[0].timestamp)).toString().substr(16,8));
+                $('#'+ currency + "_timestamp").text((new Date(data["rate"][0].timestamp)).toString().substr(16,8));
                 var before_value = $('#'+ currency + "_before_value").text();
                 if(before_value && before_value != "0"){
                     var ave = ($('#'+ currency + "_after_value").text() / $('#'+ currency + "_before_value").text());
@@ -149,7 +149,7 @@ function fx_rate(){
 function fx_rate_all(){
     // for(i= 0; i < currency_pairs.length; i++){
         fx_rate();
-        setTimeout(fx_rate_all,500);
+        setTimeout(fx_rate_all,1000);
     // }
 }
 // table_init();
