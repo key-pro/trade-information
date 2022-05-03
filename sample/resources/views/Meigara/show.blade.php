@@ -1194,7 +1194,7 @@ function kaine_check(data){
 </script>
 @endsection
 @section('content')
-    <table>
+    <table class="table">
         <tr>
             <th>買値：</th>
             <td id="bidPrice"></td>
@@ -1233,7 +1233,7 @@ function kaine_check(data){
         </tr>
     </table>
 <input type="date" id="chart_date" min=1 max=6 onchange="drawChart()" value="{{ date('Y-m-d',time()-86400) }}">
-<select name="chart_Interval" id="chart_Interval" onchange="drawChart()">
+<select name="chart_Interval" id="chart_Interval" onchange="drawChart()" >
     <option value="1">1</option>
     <option value="3">3</option>
     <option value="5" selected>5</option>
