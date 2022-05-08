@@ -17,7 +17,7 @@
        
     <!-- ヘッダー -->
     <header>
-        tradeインフォメーション
+        <div id="logo"><img src="{{asset('assets/img/logo.png')}}" alt=""></div>
         <nav>
             <ul>
                 <li><a href='/Meigara/5492/show'>アメリカ株</a></li>

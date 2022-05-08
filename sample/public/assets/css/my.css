@@ -2,12 +2,20 @@
 
 
 /* スマホ用デザイン */
+
 body{
     font-size: 15pt;
 }
 
 h1,h2{
     text-align: center;
+}
+
+#logo img {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+
 }
 
 /* ナビゲーション*/
@@ -74,6 +82,10 @@ nav ul li:hover{
     height: 1em;
     border: 1px solid #cccccc;
     padding: 2px;
+}
+
+.meigara_code_jp{
+  font-size: 20px;
 }
 
 table{
@@ -199,11 +211,11 @@ table{
 }
 
 .area {
-  width: 800px;
+  width: 100%;
   background-color: cadetblue;
   margin: auto;
-  flex-wrap: wrap;
-  display: flex;
+  /* flex-wrap: wrap; */
+  /* display: flex; */
 }
  
 .tab_class {
@@ -305,6 +317,14 @@ footer{
   body{
       width: 1200px;
       font-size: 10pt;
+  }
+
+  #logo img{
+    width: 604px;
+  }
+
+  .area {
+    width: 800px;
   }
 
   .meigara-category-entry{
