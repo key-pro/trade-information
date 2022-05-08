@@ -21,7 +21,7 @@ h1,h2{
 /* ナビゲーション*/
 nav{
   margin-top: 20px;
-  border-bottom: 5px solid #ccc;
+  border-bottom: 5px solid #d0c5df;
   position: relative;
   margin-bottom: 10%;
 }
@@ -48,17 +48,17 @@ nav ul li a{
 }
 nav ul li.current{
   font-weight: bold;
-  border-top: 5px solid #00B0F0;
+  border-top: 5px solid #eee;
 }
 nav ul li.current a{
-  color: #00B0F0;
+  color: #eee;
 }
 nav ul li a:hover{
-  color: #0089BB;
-  background-color: #FBFBDD;
+  color: #eee;
+  background-color: #756c83;
 }
 nav ul li:hover{
-  border-top: 5px solid #F8E750;
+  border-top: 5px solid #ab7eef;
 }
 .light-theme {
   background: #fff;
@@ -212,16 +212,35 @@ table{
 
 .area {
   width: 100%;
-  background-color: cadetblue;
+  background-color: #fff;
+  border: 1px solid #d0c5df;
+  padding: 1em;
   margin: auto;
-  /* flex-wrap: wrap; */
-  /* display: flex; */
+  flex-wrap: wrap;
+  display: flex;  
+}
+
+.area h3{
+  color: #756c83;
+  border-left: 5px solid #756c83;
+  border-bottom: 1px solid #756c83;
+  padding-bottom: 0.5em;
+  padding-left: 0.5em;
+}
+
+.area h4{
+  color: #756c83;
+}
+
+.area h5{
+  color: #756c83;
 }
  
 .tab_class {
   width: calc(100%/5);
   height: 50px;
-  background-color: darkgrey;
+  background-color: #cdc4dc;
+  color: #eee;
   line-height: 50px;
   font-size: 15px;
   text-align: center;
@@ -235,7 +254,7 @@ input[name="tab_name"] {
 }
  
 input:checked + .tab_class {
-  background-color: cadetblue;
+  background-color: #ab7eef;
   color: aliceblue;
 }
  
@@ -267,6 +286,21 @@ input:checked + .tab_class + .content_class {
   width: 480px;
 }
 
+.meigara_code_jp th{
+  background-color: #ab7eef;
+  color: #fff;
+}
+
+.meigara_code_jp th{
+  background-color: #ab7eef;
+  color: #fff;
+}
+
+.meigara_code_jp td{
+  background-color: #d0c5df;
+  color: #fff;
+}
+
 /* ページTOPに戻る */
 .pagetop{
     display: none;
@@ -280,7 +314,7 @@ input:checked + .tab_class + .content_class {
     width: 50px;
     height: 50px;
     text-align: center;
-    background: #7db4e6;
+    background: #ab7eef;
     border-radius: 50%;
     line-height: 50px;
 }
@@ -292,12 +326,17 @@ input:checked + .tab_class + .content_class {
 
 footer{
   text-align: center;
+  background-color: #6d637c;
+  color: #fff;
+  margin-top: 2em;
+  padding: 2.5em;
 }
 
 /* タブレット用 */
 @media screen and (min-width:768px){
   body{
       width: 768px;
+      margin: 0 auto;
       font-size: 12pt;
   }
 
