@@ -4,7 +4,7 @@
 <h2>FXリアルタイムレート</h2>
 <table class="fx_rate" id="fx_rate_table">
     <tr>
-        {{-- <th class="country">国旗</th> --}}
+        <th class="country">国旗</th>
         <th class="currency_pairs">通貨ペア</th>
         <th class="before_value">更新前</th>
         <th class="after_value">更新後</th>
@@ -23,7 +23,7 @@ function table_init(currency_pairs){
     }
 
     var row_src = '<tr>' +
-    // '<td class="flags" id="XXXYYY_country"><img src="XXX"><img src="YYY"></td>' +
+    '<td class="flags" id="XXXYYY_country"><img src="XXX"><img src="YYY"></td>' +
     '<td id="XXXYYY_currency_pairs"></td>' +
     '<td id="XXXYYY_before_value"></td>' +
     '<td id="XXXYYY_after_value"></td>' +
@@ -39,11 +39,33 @@ function table_init(currency_pairs){
             var flag1 = pair.substr(0,3);
             var flag2 = pair.substr(3,3);
             //<link rel="stylesheet" href="{{asset('assets/css/my.css')}}">
-            // row = row.replaceAll("XXX","{{asset('assets/img/National_flags')}}/"+flag1+".png");
-            // row = row.replaceAll("YYY","{{asset('assets/img/National_flags')}}/"+flag2+".png");
+            row = row.replaceAll("XXX","{{asset('assets/img/National_flags')}}/"+flag1+".png");
+            row = row.replaceAll("YYY","{{asset('assets/img/National_flags')}}/"+flag2+".png");
             switch(pair){
                 
             case 'BTCJPY':
+                break;
+            case 'BCHJPY':
+                break; 
+            case 'BTGJPY':
+                break;
+            case 'DASHJPY':
+                break;
+            case 'EOSJPY':
+                break;
+            case 'ETHJPY':
+                break;
+            case 'JPYJPY':
+                break;
+            case 'LTCJPY':
+                break;
+            case 'XAGJPY':
+                break;
+            case 'XAUJPY':
+                break;
+            case 'XLMJPY':
+                break;
+            case 'XRPJPY':
                 break;
             default:
                 $("#fx_rate_table").append(row);
