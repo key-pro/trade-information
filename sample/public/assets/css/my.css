@@ -100,39 +100,39 @@ table{
   }
   th:first-of-type,
   td:first-of-type{
-    background: #b2ffd8;
+    background: #756c83;
   }
   th:nth-of-type(1),
   td:nth-of-type(1){
-    background: #d1ffd1;
+    background: #756c83;
   }
   th:nth-of-type(2),
   td:nth-of-type(2){
-    background: #e8ffd1;
+    background: #756c83;
   }
   th:nth-of-type(3),
   td:nth-of-type(3){
-    background: #ffffd1;
+    background: #756c83;
   }
   th:nth-of-type(4),
   td:nth-of-type(4){
-    background: #ffe8d1;
+    background: #756c83;
   }
   th:nth-of-type(5),
   td:nth-of-type(5){
-    background: #ffcc99;
+    background: #756c83;
   }
   th:nth-of-type(6),
   td:nth-of-type(6){
-    background: #6699cc;
+    background: #756c83;
   }
   th:nth-of-type(7),
   td:nth-of-type(7){
-    background: #cc9999;
+    background: #756c83;
   }
   th:nth-of-type(8),
   td:nth-of-type(8){
-    background: #ffffcc;
+    background: #756c83;
   }
 
 .fx_rate th.country{

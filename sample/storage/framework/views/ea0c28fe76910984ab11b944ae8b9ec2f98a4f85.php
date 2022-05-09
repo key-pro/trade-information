@@ -1,7 +1,9 @@
 
 <?php $__env->startSection('title','FX通貨一覧'); ?>
 <?php $__env->startSection('content'); ?>
-<h2>FXリアルタイムレート</h2>
+<h2>FXリアルタイムレート<br>
+    <a href="/FX/Full_var">多種FX通貨一覧はこちら</a>
+</h2>
 <table class="fx_rate" id="fx_rate_table">
     <tr>
         <th class="country">国旗</th>
