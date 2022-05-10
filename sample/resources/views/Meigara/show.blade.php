@@ -31,17 +31,18 @@ function kabu_information(){
         success: function(data, textStatus){
         // 成功したとき
         // console.log(url);
+        var important_color = "red"; 
         if(data  ==  "" || data[0].bidPrice == "0"){
-            $('#bidPrice').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
-            $('#bidSize').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
-            $('#askPrice').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
-            $('#askSize').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
-            $('#lastUpdated').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
-            $('#lastSalePrice').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
-            $('#lastSaleSize').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
-            $('#lastSaleTime').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
-            $('#volume').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
-            $('#kounyu_kabuka_rate').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
+            $('#bidPrice').text("ただいま取引時間外です。").css({"color":important_color,"font-weight":"bold"});
+            $('#bidSize').text("ただいま取引時間外です。").css({"color":important_color,"font-weight":"bold"});
+            $('#askPrice').text("ただいま取引時間外です。").css({"color":important_color,"font-weight":"bold"});
+            $('#askSize').text("ただいま取引時間外です。").css({"color":important_color,"font-weight":"bold"});
+            $('#lastUpdated').text("ただいま取引時間外です。").css({"color":important_color,"font-weight":"bold"});
+            $('#lastSalePrice').text("ただいま取引時間外です。").css({"color":important_color,"font-weight":"bold"});
+            $('#lastSaleSize').text("ただいま取引時間外です。").css({"color":important_color,"font-weight":"bold"});
+            $('#lastSaleTime').text("ただいま取引時間外です。").css({"color":important_color,"font-weight":"bold"});
+            $('#volume').text("ただいま取引時間外です。").css({"color":important_color,"font-weight":"bold"});
+            $('#kounyu_kabuka_rate').text("ただいま取引時間外です。").css({"color":important_color,"font-weight":"bold"});
             //リアルタイム購入入力チェック用為替レート
             fx_rate();
         }else{
@@ -735,7 +736,7 @@ function kabu_macd_data(result,dates){
         bar: { 
             groupWidth: '100%' 
         },
-        width: 1000,
+        width: 700,
         height: 500,
         lineWidth: 2,
         curveType: 'function',
@@ -1245,9 +1246,10 @@ function kaine_check(data){
     <option value="180">3時間</option>
     <option value="240">4時間</option>
 </select>
+<p class="chart_if">チャートをクリックするとピックアップ出来ます。</p>
 <div class="boxContainer">
     <input type="button" id="graph_sw" value="グラフ戻す" style="display:none">
-    <div class="item graph" id="chart_div" style="width: 900px; height: 500px; display:block;"></div>
+    <div class="item graph" id="chart_div" style="width: 1000px; height: 700px; display:block;"></div>
     <!-- ローソク足及び移動平均線グラフを配置 -->
     <div class="item graph" id='appendMain'></div>
     <!-- ボリンジャーバンドグラフを配置 -->

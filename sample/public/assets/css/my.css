@@ -11,11 +11,16 @@ h1,h2{
     text-align: center;
 }
 
+h1{
+  font-size: 3.5em;
+  color: #7443c1;
+  text-shadow: 4px 4px 5px #ccc;
+}
+
 #logo img {
     width: 100%;
     margin: 0;
     padding: 0;
-
 }
 
 /* ナビゲーション*/
@@ -64,17 +69,33 @@ nav ul li:hover{
   background: #fff;
   color: #333;
 }
-.dark-theme {
-  background: #000;
-  color: #ddd;
+
+nav li.active{
+  background-color: #ab7eef;
 }
 
+nav ul li.active a{
+  color: #fff;
+}
+
+nav ul li.inactive a{
+  color: #fff;
+}
+
+nav li.inactive{
+  background-color: #756c83;
+}
 
 .meigara-category-entry{
     margin: 10px auto;
     border: 1px solid #999;
     padding: 5px;
     width: 90%;
+}
+
+.meigara-entry .btn-outline-primary{
+  color: #ab7eef;
+  border-color: #ab7eef;
 }
 
 
@@ -87,6 +108,8 @@ nav ul li:hover{
 .meigara_code_jp{
   font-size: 20px;
 }
+
+/* テーブル表示 */
 
 table{
     font-size: 40px;
@@ -169,6 +192,8 @@ table{
   margin: 0 5px;
 }
 
+/* 銘柄ボックス */
+
 #form input .meigara_input{
   width: 1000px;
   height: 50px;
@@ -183,7 +208,7 @@ table{
   height: 50px;
   /* background-color: #0089BB; */
   font-size: 15pt;
-  text-align: center;
+  /* text-align: center; */
 }
 
 .search_bar{
@@ -193,6 +218,14 @@ table{
   height: 50px;
   width: 100%;
   background-color: #ddd;
+}
+
+.meigara_search_hit{ /* 銘柄検索結果あり */
+  color: #756c83;
+}
+
+.meigara_search_not_found{ /* 銘柄検索結果なし */
+  color: #756c83;
 }
 
 .search_icon{ /*アイコンに一定のスペースを設ける*/
@@ -210,6 +243,8 @@ table{
   box-sizing: border-box; /*横幅の解釈をpadding, borderまでとする*/
 }
 
+/* 市場取引ルールタブ */
+
 .area {
   width: 100%;
   background-color: #fff;
@@ -224,6 +259,7 @@ table{
   color: #756c83;
   border-left: 5px solid #756c83;
   border-bottom: 1px solid #756c83;
+  margin: 0.5em 0;
   padding-bottom: 0.5em;
   padding-left: 0.5em;
 }
@@ -235,29 +271,30 @@ table{
 .area h5{
   color: #756c83;
 }
- 
+
 .tab_class {
   width: calc(100%/5);
-  height: 50px;
+  height: 80px;
   background-color: #cdc4dc;
   color: #eee;
-  line-height: 50px;
+  line-height: 17px;
   font-size: 15px;
   text-align: center;
   display: block;
   float: left;
   order: -1;
+  padding: 28px 0;
 }
- 
+
 input[name="tab_name"] {
   display: none;
 }
- 
+
 input:checked + .tab_class {
   background-color: #ab7eef;
   color: aliceblue;
 }
- 
+
 .content_class {
   display: none;
   width: 100%;
@@ -266,10 +303,12 @@ input:checked + .tab_class {
 .content_class p{
   font-size: 12pt;
 }
- 
+
 input:checked + .tab_class + .content_class {
   display: block;
 }
+
+/* 銘柄表示チャート */
 
 .boxContainer{
   padding: 0 0 0 0;
@@ -301,6 +340,20 @@ input:checked + .tab_class + .content_class {
   color: #fff;
 }
 
+.chart_if{
+  color: #756c83;
+  font-size: 12pt;
+  
+}
+
+#graph_sw{
+  background-color: #7f836c;
+}
+
+.fx_info{
+  text-decoration: none;
+}
+
 /* ページTOPに戻る */
 .pagetop{
     display: none;
@@ -324,6 +377,8 @@ input:checked + .tab_class + .content_class {
     line-height: 50px;
 }
 
+/* フッター */
+
 footer{
   text-align: center;
   background-color: #6d637c;
@@ -346,9 +401,10 @@ footer{
       display: inline-block;
   }
 
+  /* 
   .boxContainer .graph{
     width: 360px;
-  }
+  } */
   
 }
 /* PC用 */
@@ -373,7 +429,7 @@ footer{
   }
 
   .boxContainer .graph{
-    width: 280px;
+    width: 400px;
   }
   
 }
@@ -392,7 +448,7 @@ footer{
   }
 
   .boxContainer .graph{
-    width: 500px;
+    width: 700px;
   }
   
 }
