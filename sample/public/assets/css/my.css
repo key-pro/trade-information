@@ -1,5 +1,5 @@
 /*モバイルファースト・レスポンシブ対応 */
-
+@charset 'utf-8';
 
 /* スマホ用デザイン */
 
@@ -17,6 +17,10 @@ h1{
   text-shadow: 4px 4px 5px #ccc;
 }
 
+p{
+  margin: 0 auto;
+}
+
 #logo img {
     width: 100%;
     margin: 0;
@@ -24,33 +28,86 @@ h1{
 }
 
 /* ナビゲーション*/
-nav{
-  margin-top: 20px;
-  border-bottom: 5px solid #d0c5df;
-  position: relative;
-  margin-bottom: 10%;
+
+/* ハンバーガーニュー */
+
+/* hamburger menu */
+.hamburger-menu {
 }
-nav ul{
-  position: absolute;
-  left:10%;
-  display: table;
-  margin: 0 auto;
-  padding: 0;
-  width: 80%;
-  text-align: center;
+.menu-btn {
+    position: fixed;
+    top: 65px;
+    right: 10px;
+    display: flex;
+    height: 35px;
+    width: 35px;
+    justify-content: center;
+    align-items: center;
+    z-index: 90;
+    background-color: #3584bb;
 }
-nav ul li{
-  display: table-cell;
-  min-width: 50px;
+.menu-btn span,.menu-btn span:before,.menu-btn span:after {
+    content: '';
+    display: block;
+    height: 3px;
+    width: 25px;
+    border-radius: 3px;
+    background-color: #ffffff;
+    position: absolute;
 }
-nav ul li a{
-  display: block;
-  width: 100%;
-  height: 100%;
-  padding: 10px 0;
-  text-decoration: none;
-  color: #aaa;
+.menu-btn span:before {
+    bottom: 8px;
 }
+.menu-btn span:after {
+    top: 8px;
+}
+#menu-check {
+    display: none;
+}
+#menu-check:checked ~ .menu-content {
+    left: 0;/*ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’ç”»é¢å†…ã¸*/
+}
+.menu-content {
+    overflow:scroll;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 100%;/*leftã®å€¤ã‚’å¤‰æ›´ã—ã¦ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’ç”»é¢å¤–ã¸*/
+    z-index: 80;
+    background-color: rgba(255,255,255,0.8);
+    transition: all 0.5s;/*ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³è¨­å®š*/
+}
+.menu-content ul {
+    padding: 70px 10px 0;
+}
+.menu-content ul li {
+    border-bottom: solid 1px #ffffff;
+    list-style: none;
+}
+.menu-content ul li a {
+    display: block;
+    width: 100%;
+    font-size: 15px;
+    box-sizing: border-box;
+    color:#333333;
+    text-decoration: none;
+    padding: 9px 15px 10px 0;
+    position: relative;
+}
+.menu-content ul li a::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-top: solid 2px #333333;
+    border-right: solid 2px #333333;
+    transform: rotate(45deg);
+    position: absolute;
+    right: 11px;
+    top: 16px;
+}
+
+
 nav ul li.current{
   font-weight: bold;
   border-top: 5px solid #eee;
@@ -101,7 +158,7 @@ nav li.inactive{
 
 .fx_rate th,.fx_rate td{
     height: 1em;
-    border: 1px solid #cccccc;
+    /* border: 1px solid #cccccc; */
     padding: 2px;
 }
 
@@ -113,50 +170,52 @@ nav li.inactive{
 
 table{
     font-size: 40px;
-    border-collapse: separate;
+    border-collapse: collapse;
     border-spacing: 5px;
     margin: 0 auto;
   }
-  td,th{
+  td,th,.table>:not(caption)>*>*{
     padding: 10px;
     text-align: center;
+    border: 1px solid #9d92af;
+    background-color: #dfd8ea;
   }
-  th:first-of-type,
-  td:first-of-type{
-    background: #756c83;
-  }
-  th:nth-of-type(1),
+  /* th:first-of-type,
+  td:first-of-type{ */
+    /* border: 1px solid #d6c7ed; */
+  /* } */
+  /* th:nth-of-type(1),
   td:nth-of-type(1){
-    background: #756c83;
-  }
+    /* background: #d6c7ed; */
+  /* }
   th:nth-of-type(2),
   td:nth-of-type(2){
-    background: #756c83;
+    background: #d6c7ed;
   }
   th:nth-of-type(3),
   td:nth-of-type(3){
-    background: #756c83;
+    background: #d6c7ed;
   }
   th:nth-of-type(4),
   td:nth-of-type(4){
-    background: #756c83;
-  }
-  th:nth-of-type(5),
+    background: #d6c7ed;
+  } */
+  /* th:nth-of-type(5),
   td:nth-of-type(5){
-    background: #756c83;
+    background: #d6c7ed;
   }
   th:nth-of-type(6),
   td:nth-of-type(6){
-    background: #756c83;
+    background: #d6c7ed;
   }
   th:nth-of-type(7),
   td:nth-of-type(7){
-    background: #756c83;
+    background: #d6c7ed;
   }
   th:nth-of-type(8),
   td:nth-of-type(8){
-    background: #756c83;
-  }
+    background: #d6c7ed;
+  } */
 
 .fx_rate th.country{
   width: 6em;
@@ -217,10 +276,12 @@ table{
   justify-content: center; /*アイコン、テキストボックスを横方向の中心に*/
   height: 50px;
   width: 100%;
-  background-color: #ddd;
+  background-color: #ffff;
+  /* border: 1px solid #9d92af; */
 }
 
 .meigara_search_hit{ /* 銘柄検索結果あり */
+  margin-top: 15px;
   color: #756c83;
 }
 
@@ -231,12 +292,19 @@ table{
 .search_icon{ /*アイコンに一定のスペースを設ける*/
   height: 15px;
   width: 15px;
-  padding: 15px;
+  margin: 10px;
+  zoom: 1.2;
+}
+
+.meigara_search_btn{
+  color: #ab7eef;
+  border-color: #ab7eef;
 }
 
 #text2{
   font-size: 16px;
   width: 100%; /*flexの中で100%広げる*/
+  height: 130%;
   background-color: #ddd;
   border: none; /*枠線非表示*/
   outline: none; /*フォーカス時の枠線非表示*/
@@ -247,7 +315,7 @@ table{
 
 .area {
   width: 100%;
-  background-color: #fff;
+  background-color: #eee;
   border: 1px solid #d0c5df;
   padding: 1em;
   margin: auto;
@@ -330,20 +398,14 @@ input:checked + .tab_class + .content_class {
   color: #fff;
 }
 
-.meigara_code_jp th{
-  background-color: #ab7eef;
-  color: #fff;
-}
-
 .meigara_code_jp td{
   background-color: #d0c5df;
-  color: #fff;
+  color: #333;
 }
 
 .chart_if{
   color: #756c83;
   font-size: 12pt;
-  
 }
 
 #graph_sw{
@@ -352,6 +414,12 @@ input:checked + .tab_class + .content_class {
 
 .fx_info{
   text-decoration: none;
+}
+
+.btn-outline-primary {
+  color: #756c83;
+  border-color: #756c83;
+  margin: 10px;
 }
 
 /* ページTOPに戻る */
@@ -375,6 +443,23 @@ input:checked + .tab_class + .content_class {
     font-size: 20px;
     color:#fff;
     line-height: 50px;
+}
+
+.page-item.active .page-link {
+  z-index: 3;
+  color: #fff;
+  background-color: #756c83;
+  border-color: #756c83;
+}
+
+.page-link {
+  position: relative;
+  display: block;
+  color: #756c83;
+  text-decoration: none;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 
 /* フッター */
@@ -414,6 +499,54 @@ footer{
       font-size: 10pt;
   }
 
+  #menu-check, .menu-btn{
+      display: none;
+  }
+  .menu-content {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    position: inherit;
+    top: 36px;
+    left: 0;
+    z-index: 0;
+    background-color: inherit;
+    transition: none;
+  
+  }
+
+  .menu-content ul {
+    padding: 15px 0 0 0;
+  }
+
+  nav{
+    margin-top: 20px;
+    border-bottom: 5px solid #d0c5df;
+    position: relative;
+    margin-bottom: 10%;
+  }
+  nav ul{
+    position: absolute;
+    left:10%;
+    display: table;
+    margin: 0 auto;
+    padding: 0;
+    width: 80%;
+    text-align: center;
+  }
+  nav ul li{
+    display: table-cell;
+    min-width: 50px;
+  }
+  nav ul li a{
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 10px 0;
+    text-decoration: none;
+    color: #aaa;
+  }
+  
   #logo img{
     width: 604px;
   }

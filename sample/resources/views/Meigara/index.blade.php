@@ -5,7 +5,7 @@
             <div class="search_bar">
                 <i class="fas fa-search search_icon"></i>
                     <input type="text" name="text_meigara_name_part" id="text2" placeholder="企業名検索" required="required">
-                <button>検索</button>
+                <button class="meigara_search_btn">検索</button>
             </div>
         </form>
         @if(0 < count($meigaras))
