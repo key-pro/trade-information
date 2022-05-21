@@ -65,7 +65,7 @@ p{
     display: none;
 }
 #menu-check:checked ~ .menu-content {
-    left: 0;/*ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’ç”»é¢å†…ã¸*/
+    left: 0;
 }
 .menu-content {
     overflow:scroll;
@@ -73,10 +73,10 @@ p{
     height: 100%;
     position: fixed;
     top: 0;
-    left: 100%;/*leftã®å€¤ã‚’å¤‰æ›´ã—ã¦ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’ç”»é¢å¤–ã¸*/
+    left: 100%;
     z-index: 80;
     background-color: rgba(255,255,255,0.8);
-    transition: all 0.5s;/*ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³è¨­å®š*/
+    transition: all 0.5s;
 }
 .menu-content ul {
     padding: 70px 10px 0;
@@ -166,6 +166,65 @@ nav li.inactive{
   font-size: 20px;
 }
 
+
+/* ローディング画面 */
+/*画面全体をloader-bgで覆い隠すため背景色をひいてposition: fixed;で浮かせた状態にします*/
+#loader-bg {
+  background: #fff;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 1000;
+}
+
+/*ここからコピーしてきたCSSになりますが、loader-bgで囲っているので先頭に#loader-bgを付け足しています*/
+#loader-bg .bouncingLoader {    
+  background: #fff;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+.bouncingLoader > div, .bouncingLoader:before, .bouncingLoader:after {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  background: hsl(243, 80%, 62%);
+  margin-bottom: -5px;
+  border-radius: 50%;
+  animation: bouncing-loader 0.6s infinite alternate;
+}
+
+.bouncingLoader > div, .bouncingLoader:before, .bouncingLoader:after {
+  content: "";
+}
+
+.bouncingLoader > div {
+  margin: 0 5px;
+}
+
+.bouncingLoader > div {
+  animation-delay: 0.2s;
+}
+
+.bouncingLoader:after {
+  animation-delay: 0.4s;
+}
+
+/*3つの円が上下に動くためのアニメーション*/
+@keyframes bouncing-loader {
+  to {
+      opacity: 0.1;
+      transform: translate3d(0, -16px, 0);
+  }
+}
+
+
 /* テーブル表示 */
 
 table{
@@ -251,6 +310,18 @@ table{
   margin: 0 5px;
 }
 
+/* 銘柄カテゴリ */
+
+.meigara-category-entry{
+  color: #7b6b91;
+  border-color: #ab7eef;
+}
+
+.meigara_category_btn{
+  color: #ab7eef;
+  border-color: #ab7eef;
+}
+
 /* 銘柄ボックス */
 
 #form input .meigara_input{
@@ -259,6 +330,11 @@ table{
   /* background-color: #0089BB; */
   font-size: 25pt;
   text-align: center;
+}
+
+.meigara_search{
+  color: #ab7eef;
+  border-color: #ab7eef;
 }
 
 .meigara-entry{
@@ -301,6 +377,11 @@ table{
   border-color: #ab7eef;
 }
 
+.btn:hover, .btn:active{
+  background-color: #c3b0df;
+  border: 1px solid #563d7c;
+} 
+
 #text2{
   font-size: 16px;
   width: 100%; /*flexの中で100%広げる*/
@@ -309,6 +390,10 @@ table{
   border: none; /*枠線非表示*/
   outline: none; /*フォーカス時の枠線非表示*/
   box-sizing: border-box; /*横幅の解釈をpadding, borderまでとする*/
+}
+
+#appendMain{
+  margin: 150px;
 }
 
 /* 市場取引ルールタブ */
@@ -581,7 +666,7 @@ footer{
   }
 
   .boxContainer .graph{
-    width: 700px;
+    width: 1000px;
   }
   
 }
