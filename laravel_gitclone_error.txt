@@ -1,5 +1,0 @@
-bootstrapの.gitignore以外のファイルを削除
-vendorファルダを削除
-composer update
-composer install
-https://www.google.com/recaptcha/admin/site/538302529/settings
