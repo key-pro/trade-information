@@ -17,7 +17,7 @@ class MeigaraCategoryController extends Controller
     {
         
         $text_category_name_part = request()->input("text_category_name_part");
-        $data = MeigaraCategory::where("category_name","like","%{$text_category_name_part}%")->orderBy('created_at',"desc")->paginate(3);
+        $data = MeigaraCategory::where("category_name","like","%{$text_category_name_part}%")->orderBy('created_at',"desc")->paginate(10);
         // $data = MeigaraCategory::all();
         return view("MeigaraCategory.index",['meigaraCategorys'=>$data]);
     }

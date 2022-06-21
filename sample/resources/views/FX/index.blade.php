@@ -1,7 +1,12 @@
 @extends('layouts.myapp')
 @section('title','FX通貨一覧')
 @section('content')
-<h2>FXリアルタイムレート</h2>
+<div id="loader-bg">
+    <div class="bouncingLoader"><div></div></div>
+</div>
+<h2>FXリアルタイムレート<br>
+    <a class="fx_info" href="/FX/Full_var">多種FX通貨一覧はこちら</a>
+</h2>
 <table class="fx_rate" id="fx_rate_table">
     <tr>
         <th class="country">国旗</th>
@@ -170,5 +175,10 @@
     table_init();
     fx_rate_all();
     // setInterval(fx_rate_all,10000);
+
+    $(window).on('load',function(){
+    $("#loader-bg").delay(3000).fadeOut('slow');
+    //ローディング画面を3秒（3000ms）待機してからフェードアウト
+    });
 </script>
 @endsection

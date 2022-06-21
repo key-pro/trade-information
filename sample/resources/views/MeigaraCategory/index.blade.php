@@ -3,7 +3,7 @@
 @section('content')
         <form action="{{route('MeigaraCategory.index')}}" method="get">
             <input type="text" name="text_category_name_part">
-            <button>検索</button>
+            <button class="meigara_category_btn">検索</button>
         </form>
         @foreach($meigaraCategorys as $meigaraCategory)
         <div class="meigara-category-entry">

@@ -1,7 +1,8 @@
 /*モバイルファースト・レスポンシブ対応 */
-
+@charset 'utf-8';
 
 /* スマホ用デザイン */
+
 body{
     font-size: 15pt;
 }
@@ -10,57 +11,137 @@ h1,h2{
     text-align: center;
 }
 
-/* ナビゲーション*/
-nav{
-  margin-top: 20px;
-  border-bottom: 5px solid #ccc;
-  position: relative;
-  margin-bottom: 10%;
+h1{
+  font-size: 3.5em;
+  color: #7443c1;
+  text-shadow: 4px 4px 5px #ccc;
 }
-nav ul{
-  position: absolute;
-  left:10%;
-  display: table;
+
+p{
   margin: 0 auto;
-  padding: 0;
-  width: 80%;
-  text-align: center;
 }
-nav ul li{
-  display: table-cell;
-  min-width: 50px;
+
+#logo img {
+    width: 100%;
+    margin: 0;
+    padding: 0;
 }
-nav ul li a{
-  display: block;
-  width: 100%;
-  height: 100%;
-  padding: 10px 0;
-  text-decoration: none;
-  color: #aaa;
+
+/* ナビゲーション*/
+
+/* ハンバーガーニュー */
+
+/* hamburger menu */
+.hamburger-menu {
 }
+.menu-btn {
+    position: fixed;
+    top: 65px;
+    right: 10px;
+    display: flex;
+    height: 35px;
+    width: 35px;
+    justify-content: center;
+    align-items: center;
+    z-index: 90;
+    background-color: #3584bb;
+}
+.menu-btn span,.menu-btn span:before,.menu-btn span:after {
+    content: '';
+    display: block;
+    height: 3px;
+    width: 25px;
+    border-radius: 3px;
+    background-color: #ffffff;
+    position: absolute;
+}
+.menu-btn span:before {
+    bottom: 8px;
+}
+.menu-btn span:after {
+    top: 8px;
+}
+#menu-check {
+    display: none;
+}
+#menu-check:checked ~ .menu-content {
+    left: 0;
+}
+.menu-content {
+    overflow:scroll;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 100%;
+    z-index: 80;
+    background-color: rgba(255,255,255,0.8);
+    transition: all 0.5s;
+}
+.menu-content ul {
+    padding: 70px 10px 0;
+}
+.menu-content ul li {
+    border-bottom: solid 1px #ffffff;
+    list-style: none;
+}
+.menu-content ul li a {
+    display: block;
+    width: 100%;
+    font-size: 15px;
+    box-sizing: border-box;
+    color:#333333;
+    text-decoration: none;
+    padding: 9px 15px 10px 0;
+    position: relative;
+}
+.menu-content ul li a::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-top: solid 2px #333333;
+    border-right: solid 2px #333333;
+    transform: rotate(45deg);
+    position: absolute;
+    right: 11px;
+    top: 16px;
+}
+
+
 nav ul li.current{
   font-weight: bold;
-  border-top: 5px solid #00B0F0;
+  border-top: 5px solid #eee;
 }
 nav ul li.current a{
-  color: #00B0F0;
+  color: #eee;
 }
 nav ul li a:hover{
-  color: #0089BB;
-  background-color: #FBFBDD;
+  color: #eee;
+  background-color: #756c83;
 }
 nav ul li:hover{
-  border-top: 5px solid #F8E750;
+  border-top: 5px solid #ab7eef;
 }
 .light-theme {
   background: #fff;
   color: #333;
 }
-.dark-theme {
-  background: #000;
-  color: #ddd;
+
+nav li.active{
+  background-color: #ab7eef;
 }
 
+nav ul li.active a{
+  color: #fff;
+}
+
+nav ul li.inactive a{
+  color: #fff;
+}
+
+nav li.inactive{
+  background-color: #756c83;
+}
 
 .meigara-category-entry{
     margin: 10px auto;
@@ -69,59 +150,131 @@ nav ul li:hover{
     width: 90%;
 }
 
+.meigara-entry .btn-outline-primary{
+  color: #ab7eef;
+  border-color: #ab7eef;
+}
+
 
 .fx_rate th,.fx_rate td{
     height: 1em;
-    border: 1px solid #cccccc;
+    /* border: 1px solid #cccccc; */
     padding: 2px;
 }
 
+.meigara_code_jp{
+  font-size: 20px;
+}
+
+
+/* ローディング画面 */
+/*画面全体をloader-bgで覆い隠すため背景色をひいてposition: fixed;で浮かせた状態にします*/
+#loader-bg {
+  background: #fff;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 1000;
+}
+
+/*ここからコピーしてきたCSSになりますが、loader-bgで囲っているので先頭に#loader-bgを付け足しています*/
+#loader-bg .bouncingLoader {    
+  background: #fff;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+.bouncingLoader > div, .bouncingLoader:before, .bouncingLoader:after {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  background: hsl(243, 80%, 62%);
+  margin-bottom: -5px;
+  border-radius: 50%;
+  animation: bouncing-loader 0.6s infinite alternate;
+}
+
+.bouncingLoader > div, .bouncingLoader:before, .bouncingLoader:after {
+  content: "";
+}
+
+.bouncingLoader > div {
+  margin: 0 5px;
+}
+
+.bouncingLoader > div {
+  animation-delay: 0.2s;
+}
+
+.bouncingLoader:after {
+  animation-delay: 0.4s;
+}
+
+/*3つの円が上下に動くためのアニメーション*/
+@keyframes bouncing-loader {
+  to {
+      opacity: 0.1;
+      transform: translate3d(0, -16px, 0);
+  }
+}
+
+
+/* テーブル表示 */
+
 table{
     font-size: 40px;
-    border-collapse: separate;
+    border-collapse: collapse;
     border-spacing: 5px;
     margin: 0 auto;
   }
-  td,th{
+  td,th,.table>:not(caption)>*>*{
     padding: 10px;
     text-align: center;
+    border: 1px solid #9d92af;
+    background-color: #dfd8ea;
   }
-  th:first-of-type,
-  td:first-of-type{
-    background: #b2ffd8;
-  }
-  th:nth-of-type(1),
+  /* th:first-of-type,
+  td:first-of-type{ */
+    /* border: 1px solid #d6c7ed; */
+  /* } */
+  /* th:nth-of-type(1),
   td:nth-of-type(1){
-    background: #d1ffd1;
-  }
+    /* background: #d6c7ed; */
+  /* }
   th:nth-of-type(2),
   td:nth-of-type(2){
-    background: #e8ffd1;
+    background: #d6c7ed;
   }
   th:nth-of-type(3),
   td:nth-of-type(3){
-    background: #ffffd1;
+    background: #d6c7ed;
   }
   th:nth-of-type(4),
   td:nth-of-type(4){
-    background: #ffe8d1;
-  }
-  th:nth-of-type(5),
+    background: #d6c7ed;
+  } */
+  /* th:nth-of-type(5),
   td:nth-of-type(5){
-    background: #ffcc99;
+    background: #d6c7ed;
   }
   th:nth-of-type(6),
   td:nth-of-type(6){
-    background: #6699cc;
+    background: #d6c7ed;
   }
   th:nth-of-type(7),
   td:nth-of-type(7){
-    background: #cc9999;
+    background: #d6c7ed;
   }
   th:nth-of-type(8),
   td:nth-of-type(8){
-    background: #ffffcc;
-  }
+    background: #d6c7ed;
+  } */
 
 .fx_rate th.country{
   width: 6em;
@@ -157,6 +310,20 @@ table{
   margin: 0 5px;
 }
 
+/* 銘柄カテゴリ */
+
+.meigara-category-entry{
+  color: #7b6b91;
+  border-color: #ab7eef;
+}
+
+.meigara_category_btn{
+  color: #ab7eef;
+  border-color: #ab7eef;
+}
+
+/* 銘柄ボックス */
+
 #form input .meigara_input{
   width: 1000px;
   height: 50px;
@@ -165,13 +332,18 @@ table{
   text-align: center;
 }
 
+.meigara_search{
+  color: #ab7eef;
+  border-color: #ab7eef;
+}
+
 .meigara-entry{
   margin-top: 10px;
   width: 1000px;
   height: 50px;
   /* background-color: #0089BB; */
   font-size: 15pt;
-  text-align: center;
+  /* text-align: center; */
 }
 
 .search_bar{
@@ -180,53 +352,102 @@ table{
   justify-content: center; /*アイコン、テキストボックスを横方向の中心に*/
   height: 50px;
   width: 100%;
-  background-color: #ddd;
+  background-color: #ffff;
+  /* border: 1px solid #9d92af; */
+}
+
+.meigara_search_hit{ /* 銘柄検索結果あり */
+  margin-top: 15px;
+  color: #756c83;
+}
+
+.meigara_search_not_found{ /* 銘柄検索結果なし */
+  color: #756c83;
 }
 
 .search_icon{ /*アイコンに一定のスペースを設ける*/
   height: 15px;
   width: 15px;
-  padding: 15px;
+  margin: 10px;
+  zoom: 1.2;
 }
+
+.meigara_search_btn{
+  color: #ab7eef;
+  border-color: #ab7eef;
+}
+
+.btn:hover, .btn:active{
+  background-color: #c3b0df;
+  border: 1px solid #563d7c;
+} 
 
 #text2{
   font-size: 16px;
   width: 100%; /*flexの中で100%広げる*/
+  height: 130%;
   background-color: #ddd;
   border: none; /*枠線非表示*/
   outline: none; /*フォーカス時の枠線非表示*/
   box-sizing: border-box; /*横幅の解釈をpadding, borderまでとする*/
 }
 
+#appendMain{
+  margin: 150px;
+}
+
+/* 市場取引ルールタブ */
+
 .area {
-  width: 800px;
-  background-color: cadetblue;
+  width: 100%;
+  background-color: #eee;
+  border: 1px solid #d0c5df;
+  padding: 1em;
   margin: auto;
   flex-wrap: wrap;
-  display: flex;
+  display: flex;  
 }
- 
+
+.area h3{
+  color: #756c83;
+  border-left: 5px solid #756c83;
+  border-bottom: 1px solid #756c83;
+  margin: 0.5em 0;
+  padding-bottom: 0.5em;
+  padding-left: 0.5em;
+}
+
+.area h4{
+  color: #756c83;
+}
+
+.area h5{
+  color: #756c83;
+}
+
 .tab_class {
   width: calc(100%/5);
-  height: 50px;
-  background-color: darkgrey;
-  line-height: 50px;
+  height: 80px;
+  background-color: #cdc4dc;
+  color: #eee;
+  line-height: 17px;
   font-size: 15px;
   text-align: center;
   display: block;
   float: left;
   order: -1;
+  padding: 28px 0;
 }
- 
+
 input[name="tab_name"] {
   display: none;
 }
- 
+
 input:checked + .tab_class {
-  background-color: cadetblue;
+  background-color: #ab7eef;
   color: aliceblue;
 }
- 
+
 .content_class {
   display: none;
   width: 100%;
@@ -235,10 +456,12 @@ input:checked + .tab_class {
 .content_class p{
   font-size: 12pt;
 }
- 
+
 input:checked + .tab_class + .content_class {
   display: block;
 }
+
+/* 銘柄表示チャート */
 
 .boxContainer{
   padding: 0 0 0 0;
@@ -255,6 +478,35 @@ input:checked + .tab_class + .content_class {
   width: 480px;
 }
 
+.meigara_code_jp th{
+  background-color: #ab7eef;
+  color: #fff;
+}
+
+.meigara_code_jp td{
+  background-color: #d0c5df;
+  color: #333;
+}
+
+.chart_if{
+  color: #756c83;
+  font-size: 12pt;
+}
+
+#graph_sw{
+  background-color: #7f836c;
+}
+
+.fx_info{
+  text-decoration: none;
+}
+
+.btn-outline-primary {
+  color: #756c83;
+  border-color: #756c83;
+  margin: 10px;
+}
+
 /* ページTOPに戻る */
 .pagetop{
     display: none;
@@ -268,7 +520,7 @@ input:checked + .tab_class + .content_class {
     width: 50px;
     height: 50px;
     text-align: center;
-    background: #7db4e6;
+    background: #ab7eef;
     border-radius: 50%;
     line-height: 50px;
 }
@@ -278,14 +530,38 @@ input:checked + .tab_class + .content_class {
     line-height: 50px;
 }
 
+.page-item.active .page-link {
+  z-index: 3;
+  color: #fff;
+  background-color: #756c83;
+  border-color: #756c83;
+}
+
+.page-link {
+  position: relative;
+  display: block;
+  color: #756c83;
+  text-decoration: none;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+/* フッター */
+
 footer{
   text-align: center;
+  background-color: #6d637c;
+  color: #fff;
+  margin-top: 2em;
+  padding: 2.5em;
 }
 
 /* タブレット用 */
 @media screen and (min-width:768px){
   body{
       width: 768px;
+      margin: 0 auto;
       font-size: 12pt;
   }
 
@@ -295,9 +571,10 @@ footer{
       display: inline-block;
   }
 
+  /* 
   .boxContainer .graph{
     width: 360px;
-  }
+  } */
   
 }
 /* PC用 */
@@ -307,6 +584,62 @@ footer{
       font-size: 10pt;
   }
 
+  #menu-check, .menu-btn{
+      display: none;
+  }
+  .menu-content {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    position: inherit;
+    top: 36px;
+    left: 0;
+    z-index: 0;
+    background-color: inherit;
+    transition: none;
+  
+  }
+
+  .menu-content ul {
+    padding: 15px 0 0 0;
+  }
+
+  nav{
+    margin-top: 20px;
+    border-bottom: 5px solid #d0c5df;
+    position: relative;
+    margin-bottom: 10%;
+  }
+  nav ul{
+    position: absolute;
+    left:10%;
+    display: table;
+    margin: 0 auto;
+    padding: 0;
+    width: 80%;
+    text-align: center;
+  }
+  nav ul li{
+    display: table-cell;
+    min-width: 50px;
+  }
+  nav ul li a{
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 10px 0;
+    text-decoration: none;
+    color: #aaa;
+  }
+  
+  #logo img{
+    width: 604px;
+  }
+
+  .area {
+    width: 800px;
+  }
+
   .meigara-category-entry{
       margin: 10px;
       width: 28%;
@@ -314,7 +647,7 @@ footer{
   }
 
   .boxContainer .graph{
-    width: 280px;
+    width: 400px;
   }
   
 }
@@ -333,7 +666,7 @@ footer{
   }
 
   .boxContainer .graph{
-    width: 500px;
+    width: 1000px;
   }
   
 }

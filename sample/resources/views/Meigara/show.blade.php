@@ -31,17 +31,18 @@ function kabu_information(){
         success: function(data, textStatus){
         // 成功したとき
         // console.log(url);
+        var important_color = "red"; 
         if(data  ==  "" || data[0].bidPrice == "0"){
-            $('#bidPrice').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
-            $('#bidSize').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
-            $('#askPrice').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
-            $('#askSize').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
-            $('#lastUpdated').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
-            $('#lastSalePrice').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
-            $('#lastSaleSize').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
-            $('#lastSaleTime').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
-            $('#volume').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
-            $('#kounyu_kabuka_rate').text("ただいま取引時間外です。").css({"color":"red","font-weight":"bold"});
+            $('#bidPrice').text("ただいま取引時間外です。").css({"color":important_color,"font-weight":"bold"});
+            $('#bidSize').text("ただいま取引時間外です。").css({"color":important_color,"font-weight":"bold"});
+            $('#askPrice').text("ただいま取引時間外です。").css({"color":important_color,"font-weight":"bold"});
+            $('#askSize').text("ただいま取引時間外です。").css({"color":important_color,"font-weight":"bold"});
+            $('#lastUpdated').text("ただいま取引時間外です。").css({"color":important_color,"font-weight":"bold"});
+            $('#lastSalePrice').text("ただいま取引時間外です。").css({"color":important_color,"font-weight":"bold"});
+            $('#lastSaleSize').text("ただいま取引時間外です。").css({"color":important_color,"font-weight":"bold"});
+            $('#lastSaleTime').text("ただいま取引時間外です。").css({"color":important_color,"font-weight":"bold"});
+            $('#volume').text("ただいま取引時間外です。").css({"color":important_color,"font-weight":"bold"});
+            $('#kounyu_kabuka_rate').text("ただいま取引時間外です。").css({"color":important_color,"font-weight":"bold"});
             //リアルタイム購入入力チェック用為替レート
             fx_rate();
         }else{
@@ -50,13 +51,13 @@ function kabu_information(){
             $('#askPrice').text(data[0].askPrice);
             $('#askSize').text(data[0].askSize);
             $('#kounyu_kabuka_rate').text(data[0].bidPrice);
-            $('#lastUpdated').text((new Date(data[0].lastUpdated)).toString());
+            $('#lastUpdated').text((new Date(data[0].lastUpdated)).toString().substr(16,8));
             $('#lastSalePrice').text(data[0].lastSalePrice);
             $('#lastSaleSize').text(data[0].lastSaleSize);
             // if(data[0].lastSaleTime != 0){
-            $('#lastSaleTime').text((new Date(data[0].lastSaleTime)).toString());
+            $('#lastSaleTime').text((new Date(data[0].lastSaleTime)).toString().substr(16,8));
             // }else{
-            $('#lastSaleTime').text((new Date(data[0].lastUpdated)).toString());
+            $('#lastSaleTime').text((new Date(data[0].lastUpdated)).toString().substr(16,8));
             // }
             $('#volume').text(data[0].volume);
             //リアルタイム購入入力チェック用為替レート
@@ -88,6 +89,7 @@ function kabu_chart_rousoku_and_kabu_range_value(date,chartInterval){
     var symbol = '{{ $meigara -> symbol }}';
     var hostname = "{{ request()->getUriForPath('') }}";
     // alert(hostname);
+    
     var url = hostname + "/api/Meigara/chart_data?symbol=" + symbol + "&chartdate=" + date + "&chartInterval=" + chartInterval;
     // console.log(url);
     candle_data = [];
@@ -151,17 +153,100 @@ function kabu_chart_rousoku_and_kabu_range_value(date,chartInterval){
 /**
  * 株価日時と時間変更時株価再取得
  */
+
+var g_change_date_val = "";
+
+function start_day_date(target_month,dow){
+    var date = new Date();
+    var year = date.getFullYear();
+
+    target_month_start = Date.parse(date.getFullYear() + "-" + target_month + "-" + "01 00:00:00");
+    date.setTime(target_month_start);
+    const month = date.getMonth();
+
+    const days = [];
+
+    for (let i = 1; i <= 31; i++){
+        const tmpDate = new Date(year, month, i);
+        if (month !== tmpDate.getMonth()) break; //月代わりで処理終了
+        if (tmpDate.getDay() !== dow) continue; //引数に指定した曜日以外の時は何もしない
+        days.push(tmpDate);
+    }
+    return days;
+}
+
+//市場時間（サマータイム考慮済み）
+function get_market_open_time(){
+    var current_date = new Date();
+    var Sundays_start_day = start_day_date(3,0); //三月の日曜日が一覧を取得
+    var Sundays_end_day =  start_day_date(10,0); //11月の日曜日が一覧を取得
+    if(Sundays_start_day[1].getTime() <= current_date.getTime() &&  current_date.getTime() <= Sundays_end_day[0].getTime){
+        //サマータイム有効(22:30)
+        return Date.parse(current_date.getFullYear() + "-" + (current_date.getMonth() + 1) + "-" + current_date.getDate() + "22:30:00");
+    }else{
+        //サマータイム無効(23:30)
+        return Date.parse(current_date.getFullYear() + "-" + (current_date.getMonth() + 1) + "-" + current_date.getDate() + "23:30:00");
+    }
+    // var summertime_start = Date.parse();
+}
+
+
+
 function drawChart() {
     kabu_stock();
+    var chart_date_val = $('#chart_date').val();
+
+    var chart_date = new Date();
+
+    var current_date = new Date();
+    var date = new Date(current_date.getTime() - 86400000);
+    date = date.getFullYear() + (date.getMonth() + 1).toString().padStart(2, "0") + date.getDate().toString().padStart(2, "0");
+    var market_open_time_ts = get_market_open_time();
+
+    var kanousaishin_date = null;  
+    if(current_date.getTime() > market_open_time_ts){
+        //市場が開いている
+        kanousaishin_date_ts = Date.parse(current_date.getFullYear() + "-" + (current_date.getMonth() + 1) + "-" +current_date.getDate());
+    }else{
+        //市場が開いていない
+        kanousaishin_date_ts = Date.parse(current_date.getFullYear() + "-" + (current_date.getMonth() + 1) + "-" +current_date.getDate());
+    }
     
-    var date1 = $('#chart_date').val();
-    date2 = date1.replace(/-/g ,'');
+    // current_date.getFullYear() + '-' + current_date.getMonth() + 1 + '-' + current_date.getDate() + '22:30';
+
+    chart_date.setTime(Date.parse(chart_date_val));
+
+    //曜日を取得 0=日 6=土
+    let week = chart_date.getDay();
+    //土日または祝日のとき
+    if(week == 0 || week == 6){
+        //アラート
+        alert("その日は選択できません｡(土日は原則休場)");
+        //inputを空に
+        $(this).val(g_change_date_val);
+        return;
+    }
+
+    if(kanousaishin_date_ts < Date.parse(chart_date_val)){
+			//アラート
+			alert("その日は選択できません｡(未来日のため)");
+			//inputを空に
+			$(this).val(g_change_date_val);
+            return;
+	}
+    g_change_date_val = chart_date;
+    
+   
+
+
+
+    var date_value = date.replace(/-/g ,'');
     var chartInterval = $('#chart_Interval').val();
     // console.log(date);
     // console.log(chartInterval);
     // alert(url);
-    if(date2 && chartInterval){
-        kabu_chart_rousoku_and_kabu_range_value(date2,chartInterval);
+    if(date_value && chartInterval){
+        kabu_chart_rousoku_and_kabu_range_value(date_value,chartInterval);
     }
 }
 
@@ -343,8 +428,8 @@ function kabu_idou_ave_data(result,dates){
         bar: { 
             groupWidth: '100%' 
         },
-        width: 1000,
-        height: 500,
+        width: 800,
+        height: 700,
         lineWidth: 2,
         curveType: 'function',
         //チャートのタイプとして、ローソク足を指定
@@ -735,8 +820,8 @@ function kabu_macd_data(result,dates){
         bar: { 
             groupWidth: '100%' 
         },
-        width: 1000,
-        height: 500,
+        width: 800,
+        height: 800,
         lineWidth: 2,
         curveType: 'function',
         //チャートのタイプとして、ローソク足を指定
@@ -932,7 +1017,9 @@ function kabu_rsi_data(result,dates){
 
         var options_RSI = { 
             //オプションの指定
-            title: 'RSI'
+            title: 'RSI',
+            width:800,
+            height:800,
         };
 
         var chart_RSI = new google.visualization.LineChart(document.getElementById('appendMain_RSI'));
@@ -1017,6 +1104,7 @@ function kabu_volume_chart(volume, dates, length){
             },
             hAxis: {direction: -1},
             width: 800,
+            height: 400,
             vAxis:{
                 viewWindowMode:'maximized'
             },
@@ -1126,7 +1214,9 @@ function draw_bar_chart(data,chartInterval){
 
             var options = {
                 title: 'レンジ幅',
-                vAxis: {title: '銘柄'}
+                vAxis: {title: '銘柄'},
+                width: 600,
+                height: 400,
             };
             var chart = new google.visualization.BarChart(document.getElementById('gct_sample_bar'));
             chart.draw(data, options);
@@ -1190,11 +1280,13 @@ function kaine_check(data){
     }
 }
 
-
 </script>
 @endsection
 @section('content')
-    <table>
+<div id="loader-bg">
+    <div class="bouncingLoader"><div></div></div>
+</div>
+    <table class="table">
         <tr>
             <th>買値：</th>
             <td id="bidPrice"></td>
@@ -1233,7 +1325,7 @@ function kaine_check(data){
         </tr>
     </table>
 <input type="date" id="chart_date" min=1 max=6 onchange="drawChart()" value="{{ date('Y-m-d',time()-86400) }}">
-<select name="chart_Interval" id="chart_Interval" onchange="drawChart()">
+<select name="chart_Interval" id="chart_Interval" onchange="drawChart()" >
     <option value="1">1</option>
     <option value="3">3</option>
     <option value="5" selected>5</option>
@@ -1245,24 +1337,48 @@ function kaine_check(data){
     <option value="180">3時間</option>
     <option value="240">4時間</option>
 </select>
+<p class="chart_if">チャートをクリックするとピックアップ出来ます。</p>
 <div class="boxContainer">
     <input type="button" id="graph_sw" value="グラフ戻す" style="display:none">
-    <div class="item graph" id="chart_div" style="width: 900px; height: 500px; display:block;"></div>
+    <div class="item graph" style="width: 1100px; height: 1100px;">
+        <p>ローソク足</p>
+        <div id="chart_div" style="width: 1000px; height: 1000px; display:block; "></div>
+    </div>
     <!-- ローソク足及び移動平均線グラフを配置 -->
-    <div class="item graph" id='appendMain'></div>
+    <div class="item graph">
+        <p>移動平均</p>
+        <div id='appendMain' ></div>
+    </div>
     <!-- ボリンジャーバンドグラフを配置 -->
-    <div class="item graph" id='appendMain_BB'></div>
+    <div class="item graph">
+        <p>ボリンジャーバンド</p>
+        <div id='appendMain_BB'></div>
+    </div>
     <!-- MACDグラフを配置 -->
-    <div class="item graph" id='appendMain_MD'></div>
+    <div class="item graph">
+        <p>MACD</p>
+        <div id='appendMain_MD'></div>
+    </div>
     <!-- MACD棒グラフを配置 -->
-    <div class="item graph" id='appendMain_MD_history'></div>
+    <div class="item graph">
+        <p>MACDヒストグラム</p>
+        <div id='appendMain_MD_history'></div>
+    </div>
     <!-- RSIグラフを配置 -->
-    <div class="item graph" id='appendMain_RSI'></div>
+    <div class="item graph">
+        <p>RSI</p>
+        <div id='appendMain_RSI'></div>
+    </div>
     <!-- 出来高の棒グラフを配置 -->
-    <div class="item graph" id='appendVolume'></div>
+    <div class="item graph">
+        <p>今日の出来高</p>
+        <div id='appendVolume'></div>
+    </div>
     <!-- 1日レンジを配置 -->
-    <div class="item graph" id='gct_sample_bar'></div>
-    
+    <div class="item graph">
+        <p>1日レンジ幅</p>
+        <div id='gct_sample_bar'></div>
+    </div>
 </div>
 <p>実際購入金額</p>
 <p id="kounyu_kabuka_rate"></p>
@@ -1278,23 +1394,47 @@ function kaine_check(data){
 /**
  * 日付チェック（土日休場）
  */
-$(function(){
-	//入力したとき
-	$("#chart_date").on("change", function(){
-		//内容を取得
-		let val = $(this).val();
-		//整形
-		let date = new Date(val);
-		//曜日を取得 0=日 6=土
-		let week = date.getDay();
-		//土日または祝日のとき
-		if(week == 0 || week == 6){
-			//アラート
-			alert("その日は選択できません｡(土日は原則休場)");
-			//inputを空に
-			$(this).val("");
-		}
-	});
+// $(function(){
+// 	//入力したとき
+// 	$("#chart_date").on("change", function(){
+// 		//内容を取得
+// 		let val = $(this).val();
+// 		//整形
+// 		let date = new Date(val);
+// 		//曜日を取得 0=日 6=土
+// 		let week = date.getDay();
+// 		//土日または祝日のとき
+// 		if(week == 0 || week == 6){
+// 			//アラート
+// 			alert("その日は選択できません｡(土日は原則休場)");
+// 			//inputを空に
+// 			//$(this).val("");
+// 		}
+// 	});
+// });
+
+/**
+ * 日付チェック（未来日）
+ */
+//  $(function(){
+// 	//入力したとき
+// 	$("#chart_date").on("change", function(){
+// 		//内容を取得
+// 		let val = $(this).val();
+		
+//         // var checkDate = $('#check_Date').val();
+//         if(val instanceof Date && !isNaN(val.valueOf())){
+// 			//アラート
+// 			alert("その日は選択できません｡(未来日のため)");
+// 			//inputを空に
+// 			$(this).val("");
+// 		}
+// 	});
+// });
+
+$(window).on('load',function(){
+ $("#loader-bg").delay(3000).fadeOut('slow');
+ //ローディング画面を3秒（3000ms）待機してからフェードアウト
 });
 
 $('.graph').on('click', function(){
