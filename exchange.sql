@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- ホスト: 127.0.0.1
--- 生成日時: 2022-04-04 09:33:33
--- サーバのバージョン： 10.4.22-MariaDB
--- PHP のバージョン: 7.4.26
+-- 生成日時: 2022-05-21 04:33:55
+-- サーバのバージョン： 10.4.18-MariaDB
+-- PHP のバージョン: 8.0.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,6 +20,22 @@ SET time_zone = "+00:00";
 --
 -- データベース: `exchange`
 --
+
+-- --------------------------------------------------------
+
+--
+-- テーブルの構造 `failed_jobs`
+--
+
+CREATE TABLE `failed_jobs` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `connection` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `queue` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -6298,9 +6314,108 @@ INSERT INTO `meigaras` (`id`, `symbol`, `meigara_name`, `currency`, `created_at`
 (7494, 'SCYX', 'SCYNEXIS Inc.', 'USD', '2022-03-30 06:33:41', '0000-00-00 00:00:00'),
 (7495, 'ICUI', 'ICU Medical Inc', 'USD', '2022-03-15 11:38:59', '0000-00-00 00:00:00');
 
+-- --------------------------------------------------------
+
+--
+-- テーブルの構造 `meigara_categories`
+--
+
+CREATE TABLE `meigara_categories` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `category_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `parent_id` bigint(20) UNSIGNED NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- テーブルのデータのダンプ `meigara_categories`
+--
+
+INSERT INTO `meigara_categories` (`id`, `category_name`, `parent_id`, `created_at`, `updated_at`) VALUES
+(2, 'アメリカ（実装完了）', 0, '2021-09-23 02:03:09', '2021-09-23 02:03:09'),
+(3, '日本（実装予定）', 0, '2021-09-23 02:20:50', '2021-09-23 02:20:50'),
+(4, 'ドイツ（実装予定）', 0, '2021-09-23 02:24:46', '2021-09-23 02:24:46'),
+(5, 'フランス（実装予定）', 0, '2021-09-23 02:25:13', '2021-09-23 02:25:13'),
+(6, 'イギリス（実装予定）', 0, '2021-10-05 01:42:34', '2022-04-12 05:56:35'),
+(8, 'イタリア（実装予定）', 0, '2021-10-05 01:42:34', '2022-04-12 05:56:35'),
+(9, 'ロシア（実装予定）', 0, '2021-10-05 01:42:34', '2022-04-12 05:56:35'),
+(10, 'オランダ（実装予定）', 0, '2021-10-05 01:42:34', '2022-04-12 05:56:35'),
+(11, 'スイス（実装予定）', 0, '2022-05-16 14:26:23', '2022-04-12 05:56:35');
+
+-- --------------------------------------------------------
+
+--
+-- テーブルの構造 `migrations`
+--
+
+CREATE TABLE `migrations` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `batch` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- テーブルのデータのダンプ `migrations`
+--
+
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
+(1, '2014_10_12_000000_create_users_table', 1),
+(2, '2014_10_12_100000_create_password_resets_table', 1),
+(3, '2019_08_19_000000_create_failed_jobs_table', 1),
+(4, '2021_08_24_100859_create_meigara_categories_table', 1),
+(5, '2021_11_09_131451_create_meigaras_table', 2),
+(6, '2021_11_16_132039_meigaras_company_name_rename', 3),
+(7, '2022_04_05_143538_users_add_col_role', 4);
+
+-- --------------------------------------------------------
+
+--
+-- テーブルの構造 `password_resets`
+--
+
+CREATE TABLE `password_resets` (
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- テーブルの構造 `users`
+--
+
+CREATE TABLE `users` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email_verified_at` timestamp NULL DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `role` tinyint(4) NOT NULL DEFAULT 20
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- テーブルのデータのダンプ `users`
+--
+
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `role`) VALUES
+(1, 'adomin', 'adomin@adomin.com', '2021-08-31 14:09:21', '$2y$10$0G6IEcb.uABVlhhR0b3FVeIRTmBXhHd39rMCVju9D9jHx63xS4Uua', 'cn6IRSpKMo4M08GX9znYkThh0QzdNdfUwHcKFaXWEq3RKtunFEcTqBJCnujM', '2021-08-24 02:18:20', '2021-08-24 02:18:20', 0),
+(2, 'test', 'test@test.com', NULL, '$2y$10$P00O3.Yvr/WZWzoOKgWIuusZNs6SzQbB5T7yjgePrWE1sYLdfjZ2W', NULL, '2021-10-22 03:08:25', '2021-10-22 03:08:25', 20);
+
 --
 -- ダンプしたテーブルのインデックス
 --
+
+--
+-- テーブルのインデックス `failed_jobs`
+--
+ALTER TABLE `failed_jobs`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
 
 --
 -- テーブルのインデックス `meigaras`
@@ -6309,14 +6424,63 @@ ALTER TABLE `meigaras`
   ADD PRIMARY KEY (`id`);
 
 --
+-- テーブルのインデックス `meigara_categories`
+--
+ALTER TABLE `meigara_categories`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- テーブルのインデックス `migrations`
+--
+ALTER TABLE `migrations`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- テーブルのインデックス `password_resets`
+--
+ALTER TABLE `password_resets`
+  ADD KEY `password_resets_email_index` (`email`);
+
+--
+-- テーブルのインデックス `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `users_email_unique` (`email`);
+
+--
 -- ダンプしたテーブルの AUTO_INCREMENT
 --
+
+--
+-- テーブルの AUTO_INCREMENT `failed_jobs`
+--
+ALTER TABLE `failed_jobs`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- テーブルの AUTO_INCREMENT `meigaras`
 --
 ALTER TABLE `meigaras`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7496;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7497;
+
+--
+-- テーブルの AUTO_INCREMENT `meigara_categories`
+--
+ALTER TABLE `meigara_categories`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- テーブルの AUTO_INCREMENT `migrations`
+--
+ALTER TABLE `migrations`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- テーブルの AUTO_INCREMENT `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
