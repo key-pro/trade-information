@@ -7,7 +7,7 @@ trade-information
 
 # Features
 
-google charts iexcloud laravelを組み合わせて投資分析サイトα版
+google charts API Iexcloud API laravelを組み合わせて投資分析サイトα版
 
 # Requirement
 
