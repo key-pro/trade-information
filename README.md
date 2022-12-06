@@ -1,13 +1,13 @@
 
-"投資分析サイト"
+投資分析サイトα版
 
 # DEMO
 
-"trade-information"
+trade-information
 
 # Features
 
-"google charts iexcloud laravelを組み合わせて投資分析サイトα版製作中です"
+google charts iexcloud laravelを組み合わせて投資分析サイトα版
 
 # Requirement
 
