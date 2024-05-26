@@ -1,10 +1,10 @@
-/*モバイルファースト・レスポンシブ対応 */
 @charset 'utf-8';
 
 /* スマホ用デザイン */
 
 body{
-    font-size: 15pt;
+    width: 80%;
+    font-size: 8pt;
 }
 
 h1,h2{
@@ -12,7 +12,7 @@ h1,h2{
 }
 
 h1{
-  font-size: 3.5em;
+  font-size: -1.0em;
   color: #7443c1;
   text-shadow: 4px 4px 5px #ccc;
 }
@@ -32,8 +32,8 @@ p{
 /* ハンバーガーニュー */
 
 /* hamburger menu */
-.hamburger-menu {
-}
+/* .hamburger-menu {
+} */
 .menu-btn {
     position: fixed;
     top: 65px;
@@ -44,7 +44,7 @@ p{
     justify-content: center;
     align-items: center;
     z-index: 90;
-    background-color: #3584bb;
+    background-color: #756c83;
 }
 .menu-btn span,.menu-btn span:before,.menu-btn span:after {
     content: '';
@@ -162,6 +162,16 @@ nav li.inactive{
     padding: 2px;
 }
 
+#sw-jpy-all{
+  margin: 5px 0px;
+  color: #ab7eef;
+  background-color: #fff;
+  border-color: #ab7eef;
+  width: 160px;
+  height: 30px;
+  border-radius: 5px;
+}
+
 .meigara_code_jp{
   font-size: 20px;
 }
@@ -179,7 +189,6 @@ nav li.inactive{
   z-index: 1000;
 }
 
-/*ここからコピーしてきたCSSになりますが、loader-bgで囲っているので先頭に#loader-bgを付け足しています*/
 #loader-bg .bouncingLoader {    
   background: #fff;
   position: fixed;
@@ -228,7 +237,8 @@ nav li.inactive{
 /* テーブル表示 */
 
 table{
-    font-size: 40px;
+    max-width: 90%;
+    font-size: 14px;
     border-collapse: collapse;
     border-spacing: 5px;
     margin: 0 auto;
@@ -342,7 +352,7 @@ table{
   width: 1000px;
   height: 50px;
   /* background-color: #0089BB; */
-  font-size: 15pt;
+  font-size: 12pt;
   /* text-align: center; */
 }
 
@@ -375,6 +385,7 @@ table{
 .meigara_search_btn{
   color: #ab7eef;
   border-color: #ab7eef;
+  margin: 15px;
 }
 
 .btn:hover, .btn:active{
@@ -392,10 +403,8 @@ table{
   box-sizing: border-box; /*横幅の解釈をpadding, borderまでとする*/
 }
 
-#appendMain{
-  margin: 150px;
-}
 
+    
 /* 市場取引ルールタブ */
 
 .area {
@@ -511,7 +520,8 @@ input:checked + .tab_class + .content_class {
 .pagetop{
     display: none;
     position: fixed;
-    right: 15px;
+    top: 950px;
+    right: 30px;
     bottom: 60px;
 }
 .pagetop a{
@@ -575,6 +585,10 @@ footer{
   .boxContainer .graph{
     width: 360px;
   } */
+  
+  #appendMain_RSI{
+    margin: 10px 10px 10px -100px;
+  }
   
 }
 /* PC用 */
@@ -647,7 +661,14 @@ footer{
   }
 
   .boxContainer .graph{
-    width: 400px;
+    width: 1200px;
+  }
+
+  table{
+    font-size: 40px;
+    border-collapse: collapse;
+    border-spacing: 5px;
+    margin: 0 auto;
   }
   
 }

@@ -18,25 +18,10 @@ class FxController extends Controller
 
     public function api_full_data(){
         $apikey = config("custom.currency_api_key");
-        $curl = curl_init();
-        curl_setopt_array($curl, [
-        //CURLOPT_URL => 'https://currencyapi.net/api/v1/rates?key=yuSkajIGZQ46gEFd7bQ2ieF1opgW7KcX73Jo&output=JSON&base=JPY',
-        CURLOPT_URL => 'https://currencyapi.net/api/v1/rates?key='. $apikey .'&output=JSON&base=JPY',
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => '',
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => 'GET',
-        ]);
-
-        $response = curl_exec($curl);
-        curl_close($curl);
-
-        // echo $response;
-
-        $json = json_decode($response, true);
+        $url = 'https://currencyapi.net/api/v1/rates?key='. $apikey .'&output=JSON&base=JPY';
+        $value = file_get_contents($url);
+       
+        $json = json_decode($value, true);
 
         $fx_full_value = [];
         $currency_pairs = [];
@@ -58,6 +43,17 @@ class FxController extends Controller
         // dd($url);
         $json = file_get_contents($url);
         // dd($json);
+        if($json !== false){
+            echo $json;
+        }else{
+            echo json_encode([ "status" => "error","server_response" => $http_response_header[0]]);
+        }
+    }
+
+    public function fx_open(Request $request){
+        $apikey = config("custom.Openexchangerates_api_key");
+        $url = "https://openexchangerates.org/api/latest.json?app_id=" . $apikey;
+        $json = file_get_contents($url);
         if($json !== false){
             echo $json;
         }else{

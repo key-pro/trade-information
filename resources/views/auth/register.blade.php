@@ -5,12 +5,11 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Register') }}</div>
+                <div class="card-header bg-primary text-white">{{ __('Register') }}</div>
 
                 <div class="card-body">
                     <form method="POST" action="{{ route('register') }}">
                         @csrf
-
                         <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
 
@@ -60,10 +59,11 @@
                                 <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
                             </div>
                         </div>
-
+                        <div class="g-recaptcha" data-sitekey="6Lf1z2gmAAAAAIvwBasFplTc64utTMbD892MOpxa" data-callback="myAlert"></div>
+                        <br/>
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" id="recaptcha" class="btn btn-primary" disabled>
                                     {{ __('Register') }}
                                 </button>
                             </div>
@@ -74,4 +74,13 @@
         </div>
     </div>
 </div>
+<script>
+//.g-recaptcha タグの data-callback 属性で指定したコールバック関数の定義
+var myAlert = function(response) {
+  //alert("チェックボックスがチェックされました！");
+  const input = document.getElementById('recaptcha');
+  input.disabled = false;
+};
+</script>
 @endsection
+

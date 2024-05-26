@@ -25,3 +25,4 @@ Route::get("Meigara/summary_data",[App\Http\Controllers\MeigaraController::class
 Route::get("Meigara/chart_data",[App\Http\Controllers\MeigaraController::class,"chartData"])->name("Api.Meiagra.chartData");
 Route::get("FX/rates",[App\Http\Controllers\FxController::class,"rateData"])->name("Api.FX.rateData");
 Route::get("/FX/Full_var",[App\Http\Controllers\FxController::class,"api_full_data"])->name("Api.FX.full_data");
+Route::get("/FX/fx_open",[App\Http\Controllers\FxController::class,"fx_open"])->name("Api.FX.fx_open");

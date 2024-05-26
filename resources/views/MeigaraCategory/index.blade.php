@@ -5,6 +5,7 @@
             <input type="text" name="text_category_name_part">
             <button class="meigara_category_btn">検索</button>
         </form>
+        @csrf
         @foreach($meigaraCategorys as $meigaraCategory)
         <div class="meigara-category-entry">
             {{$meigaraCategory->category_name}}

@@ -13,9 +13,23 @@ class MeigaraController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         //
+        $userAgent = $request->header('User-Agent');
+        if(strstr($userAgent,"iPhone")){
+            $request->session()->put('device',"iPhone");
+;            //dd($request->session()->get('device'));
+        }else if(strstr($userAgent,"Mac")){
+            $request->session()->put('device',"Mac");
+;            //dd($request->session()->get('device'));
+        }else if(strstr($userAgent,"Windows")){
+            $request->session()->put('device',"Windows");
+;           //dd($request->session()->get('device'));
+        }else if(strstr($userAgent,"Android")){
+            $request->session()->put('device',"Android");
+;           //dd($request->session()->get('device'));
+        }
         
         $data = Meigara::orderBy('created_at',"desc")->paginate(25);
         $text_meigara_name_part = request()->input("text_meigara_name_part");
@@ -77,7 +91,7 @@ class MeigaraController extends Controller
      */
     public function show(Meigara $meigara)
     {
-        //
+        //表示
         return view("Meigara.show",["meigara" => $meigara]);
     }
 
@@ -97,6 +111,7 @@ class MeigaraController extends Controller
     }
 
     public function chartData(Request $request){
+
         $apikey = config("custom.iex_api_key");
         $symbol = $request->input("symbol");
         $chartdate = $request->input("chartdate");
@@ -177,5 +192,13 @@ class MeigaraController extends Controller
         Gate::authorize("Meigara_delete");
         $meigara -> delete();
         return redirect()->route("Meigara.index")->with("message","削除完了しました。");
+    }
+
+    public function privacypolicy(Meigara $meigara){
+        return view("privacypolicy"); 
+    }
+
+    public function disclaimer(Meigara $meigara){
+        return view("disclaimer"); 
     }
 }

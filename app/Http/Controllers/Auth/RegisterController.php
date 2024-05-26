@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Lunaweb\RecaptchaV3\Facades\RecaptchaV3;
 
 class RegisterController extends Controller
 {
@@ -48,12 +49,20 @@ class RegisterController extends Controller
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(array $data)
-    {
-        return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
+    {   
+            $response = $data["g-recaptcha-response"];
+            $userip = $_SERVER['REMOTE_ADDR'];
+            $secretKey = '6Lf1z2gmAAAAAKwIQaCELWQdx1xl7Qh-zDQTgBtt';
+            $url = "https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$response&remoteip=$userip";
+            $response = file_get_contents($url);
+            $response = json_decode($response);
+            if($response -> success){
+                return Validator::make($data, [
+                    'name' => ['required', 'string', 'max:255'],
+                    'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+                    'password' => ['required', 'string', 'min:8', 'confirmed'],
+                ]);
+            }
     }
 
     /**

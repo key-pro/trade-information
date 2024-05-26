@@ -13,9 +13,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+#Route::get('/', function () {
+#    return view('welcome');
+#});
 
 Route::group(
     ["middleware" => "auth"],
@@ -40,9 +40,14 @@ Route::group(
 Route::get("/Meigara",[App\Http\Controllers\MeigaraController::class,"index"])->name("Meigara.index");
 Route::get("/MeigaraCategorys",[App\Http\Controllers\MeigaraCategoryController::class,"index"])->name("MeigaraCategory.index");
 Route::get("/Meigara/{meigara}/show",[App\Http\Controllers\MeigaraController::class,"show"])->name("Meigara.show");
+//Route::get("/Meigara/{meigara}/show",[App\Http\Controllers\MeigaraController::class,"show"])->name("Meigara.sp_show");
 Route::get("/FX",[App\Http\Controllers\FxController::class,"index"])->name("FX.index");
 Route::get("/FX/Full_var",[App\Http\Controllers\FxController::class,"full_data"])->name("FX.full_data");
 Route::get("Tradingrules",[App\Http\Controllers\TradingrulesController::class,"show"])->name("Tradingrules.show");
+Route::get("privacypolicy",[App\Http\Controllers\MeigaraController::class,"privacypolicy"])->name("MeigaraCategory.privacypolicy");
+Route::get("disclaimer",[App\Http\Controllers\MeigaraController::class,"disclaimer"])->name("MeigaraCategory.disclaimer");
+
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

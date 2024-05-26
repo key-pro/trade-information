@@ -1,0 +1,33 @@
+@charset "utf-8";
+
+.navbar-light .navbar-nav .nav-link {
+  color: rgb(171,126,239);
+}
+
+.navbar-light .navbar-nav .nav-link:hover {
+   color: rgba(171,126,239,0.2);
+}
+
+.navbar-light .navbar-brand {
+    color: #7443c1;
+}
+
+.navbar-light .navbar-brand:hover {
+   color: rgba(171,126,239,0.2);
+}
+
+.card-header{
+    color: #7443c1;
+    background-color: rgba(171,126,239,0.2);
+    
+}
+
+
+
+a:hover{
+    text-decoration:none;
+}
+
+
+
+

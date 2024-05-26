@@ -1111,6 +1111,7 @@ function kainecheck(data){
 </script>
 @endsection
 @section('content')
+@csrf
     <table>
         <tr>
             <th>買値：</th>

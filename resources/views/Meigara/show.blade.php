@@ -23,7 +23,7 @@ function kabu_information(){
     var symbol = '{{ $meigara -> symbol }}';
     var hostname =  "{{ request()->getUriForPath('') }}";
     var url = hostname + "/api/Meigara/summary_data?symbol=" + symbol;
-    // alert(url);
+    //alert(url);
     $.ajax({
         url: url,
         dataType: "json",
@@ -91,7 +91,7 @@ function kabu_chart_rousoku_and_kabu_range_value(date,chartInterval){
     // alert(hostname);
     
     var url = hostname + "/api/Meigara/chart_data?symbol=" + symbol + "&chartdate=" + date + "&chartInterval=" + chartInterval;
-    // console.log(url);
+    //console.log(url);
     candle_data = [];
     $.ajax({
         url: url,
@@ -119,7 +119,7 @@ function kabu_chart_rousoku_and_kabu_range_value(date,chartInterval){
         alert("通信2エラーが発生しました。");
         }
     });
-    // console.log(candle_data);
+    //console.log(candle_data);
     var data = google.visualization.arrayToDataTable(
     // [
     // ['Mon', 20, 28, 38, 45],
@@ -138,13 +138,14 @@ function kabu_chart_rousoku_and_kabu_range_value(date,chartInterval){
         candlestick: {
         fallingColor: { strokeWidth: 0, fill: 'red' }, // red
         risingColor: { strokeWidth: 0, fill: 'blue' },   // greenhAxis.showTextEvery:{}
-        }
+    }
     };
 
     var chart = new google.visualization.CandlestickChart(document.getElementById('chart_div'));
     if(candle_data.length >= 1){
         chart.draw(data, options);
     }
+
     // else{
     //     alert('時間外もしくは休場のためデータ取得できません');
     // }
@@ -203,7 +204,7 @@ function drawChart() {
     date = date.getFullYear() + (date.getMonth() + 1).toString().padStart(2, "0") + date.getDate().toString().padStart(2, "0");
     var market_open_time_ts = get_market_open_time();
 
-    var kanousaishin_date = null;  
+    var kanousaishin_date = "{{ date('Y-m-d',time()-86400) }}";  
     if(current_date.getTime() > market_open_time_ts){
         //市場が開いている
         kanousaishin_date_ts = Date.parse(current_date.getFullYear() + "-" + (current_date.getMonth() + 1) + "-" +current_date.getDate());
@@ -236,11 +237,7 @@ function drawChart() {
 	}
     g_change_date_val = chart_date;
     
-   
-
-
-
-    var date_value = date.replace(/-/g ,'');
+    var date_value = chart_date_val.replace(/-/g ,'');
     var chartInterval = $('#chart_Interval').val();
     // console.log(date);
     // console.log(chartInterval);
@@ -1017,7 +1014,7 @@ function kabu_rsi_data(result,dates){
 
         var options_RSI = { 
             //オプションの指定
-            title: 'RSI',
+            //title: 'RSI',
             width:800,
             height:800,
         };
@@ -1283,6 +1280,7 @@ function kaine_check(data){
 </script>
 @endsection
 @section('content')
+@csrf
 <div id="loader-bg">
     <div class="bouncingLoader"><div></div></div>
 </div>
@@ -1340,14 +1338,18 @@ function kaine_check(data){
 <p class="chart_if">チャートをクリックするとピックアップ出来ます。</p>
 <div class="boxContainer">
     <input type="button" id="graph_sw" value="グラフ戻す" style="display:none">
-    <div class="item graph" style="width: 1100px; height: 1100px;">
+    <div class="item graph">
         <p>ローソク足</p>
-        <div id="chart_div" style="width: 1000px; height: 1000px; display:block; "></div>
+        @if(session('device') == "Mac" || session('device') == "Windows")
+        <div id="chart_div" style="width: 1000px; height:800px;"></div>
+        @else
+        <div id="chart_div" style="width: 1000px; height:850px"></div>
+        @endif
     </div>
     <!-- ローソク足及び移動平均線グラフを配置 -->
     <div class="item graph">
         <p>移動平均</p>
-        <div id='appendMain' ></div>
+        <div id='appendMain'></div>
     </div>
     <!-- ボリンジャーバンドグラフを配置 -->
     <div class="item graph">
@@ -1388,7 +1390,7 @@ function kaine_check(data){
 <input type="button" id="kingaku_keisan" value="計算">
 <p id="goukei"></p>
 <a class="btn-outline-primary btn" href="{{route('Meigara.index',[''])}}"><i class="fas fa-cog"></i>一覧戻る</a>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 <script>
 
 /**
