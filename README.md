@@ -21,6 +21,10 @@ google charts API Iexcloud API laravelを組み合わせて投資分析サイト
 作成情報を列挙する
 
 * 作成者 Yuki Kamimura
+
+Uploading システム動作動画.mp4…
+
+
 * 所属  HAL Tokyo
 
 # License
